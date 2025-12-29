@@ -83,28 +83,32 @@ public class OutlineRenderer {
         );
 
         Matrix4f matrix = poseStack.last().pose();
+        
+        int passes = Math.max(1, (int)(lineWidth));
+        float offsetIncrement = 0.001f;
 
-// Draw outline using calculated normals
-        shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
-            float dx = (float)(maxX - minX);
-            float dy = (float)(maxY - minY);
-            float dz = (float)(maxZ - minZ);
+        for (int pass = 0; pass < passes; pass++) {
+            float offset = pass * offsetIncrement;
 
-            float length = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
+            shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
+                float dx = (float)(maxX - minX);
+                float dy = (float)(maxY - minY);
+                float dz = (float)(maxZ - minZ);
+                float length = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            // Avoid division by zero
-            float normalX = length > 1e-6f ? dx / length : 1.0f;
-            float normalY = length > 1e-6f ? dy / length : 0.0f;
-            float normalZ = length > 1e-6f ? dz / length : 0.0f;
+                float normalX = length > 1e-6f ? dx / length : 1.0f;
+                float normalY = length > 1e-6f ? dy / length : 0.0f;
+                float normalZ = length > 1e-6f ? dz / length : 0.0f;
 
-            vertexConsumer.addVertex(matrix, (float)minX, (float)minY, (float)minZ)
-                    .setColor(red, green, blue, alpha)
-                    .setNormal(normalX, normalY, normalZ);
+                vertexConsumer.addVertex(matrix, (float)minX + offset, (float)minY + offset, (float)minZ + offset)
+                        .setColor(red, green, blue, alpha)
+                        .setNormal(normalX, normalY, normalZ);
 
-            vertexConsumer.addVertex(matrix, (float)maxX, (float)maxY, (float)maxZ)
-                    .setColor(red, green, blue, alpha)
-                    .setNormal(normalX, normalY, normalZ);
-        });
+                vertexConsumer.addVertex(matrix, (float)maxX + offset, (float)maxY + offset, (float)maxZ + offset)
+                        .setColor(red, green, blue, alpha)
+                        .setNormal(normalX, normalY, normalZ);
+            });
+        }
 
         poseStack.popPose();
         bufferSource.endBatch(RenderType.lines());
