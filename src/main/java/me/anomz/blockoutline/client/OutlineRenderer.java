@@ -1,32 +1,38 @@
 package me.anomz.blockoutline.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import me.anomz.blockoutline.config.OutlineConfig;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
 import java.awt.*;
 
 public class OutlineRenderer {
 
-    public static void onRenderBlockHighlight(RenderHighlightEvent.Block event) {
-        event.setCanceled(true);
-
+    public static void onRenderLevelStage(RenderLevelStageEvent.AfterTranslucentBlocks event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) {
+        if (mc.level == null || mc.hitResult == null) {
             return;
         }
 
-        PoseStack poseStack = event.getPoseStack();
-        BlockPos blockPos = event.getTarget().getBlockPos();
+        HitResult hitResult = mc.hitResult;
+        if (hitResult.getType() != HitResult.Type.BLOCK) {
+            return;
+        }
+
+        BlockHitResult blockHitResult = (BlockHitResult) hitResult;
+        BlockPos blockPos = blockHitResult.getBlockPos();
         Level level = mc.level;
         BlockState blockState = level.getBlockState(blockPos);
         VoxelShape shape = blockState.getShape(level, blockPos);
@@ -35,19 +41,19 @@ public class OutlineRenderer {
             return;
         }
 
-        var camera = event.getCamera();
+        Camera camera = mc.gameRenderer.getMainCamera();
+        PoseStack poseStack = event.getPoseStack();
+
         double camX = camera.getPosition().x;
         double camY = camera.getPosition().y;
         double camZ = camera.getPosition().z;
 
-// Get color values
+        // Get color values
         final float red, green, blue, alpha;
 
         if (OutlineConfig.RGB_ENABLED.get()) {
             float speed = OutlineConfig.RGB_SPEED.get().floatValue();
-            // Convert to seconds and keep number manageable
             float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
-            // Calculate hue that cycles from 0.0 to 1.0
             float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
             Color color = Color.getHSBColor(hue, 1.0f, 1.0f);
 
@@ -63,10 +69,12 @@ public class OutlineRenderer {
         alpha = OutlineConfig.OPACITY.get().floatValue();
         final float lineWidth = OutlineConfig.WIDTH.get().floatValue();
 
-// Get vertex consumer for lines
-        VertexConsumer vertexConsumer = event.getMultiBufferSource().getBuffer(RenderType.lines());
+        RenderSystem.lineWidth(lineWidth);
 
-// Translate to block position
+// Use LINES render type without lighting
+        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.lines());
+
         poseStack.pushPose();
         poseStack.translate(
                 blockPos.getX() - camX,
@@ -76,38 +84,29 @@ public class OutlineRenderer {
 
         Matrix4f matrix = poseStack.last().pose();
 
-// Draw outline multiple times with offsets to simulate thickness
-        int passes = Math.max(1, (int)(lineWidth));
-        float offsetIncrement = 0.001f;
+// Draw outline using calculated normals
+        shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            float dx = (float)(maxX - minX);
+            float dy = (float)(maxY - minY);
+            float dz = (float)(maxZ - minZ);
 
-        for (int pass = 0; pass < passes; pass++) {
-            float offset = pass * offsetIncrement;
+            float length = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            // Draw all edges of the shape
-            shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
-                // Calculate normal vector for the edge
-                float dx = (float)(maxX - minX);
-                float dy = (float)(maxY - minY);
-                float dz = (float)(maxZ - minZ);
+            // Avoid division by zero
+            float normalX = length > 1e-6f ? dx / length : 1.0f;
+            float normalY = length > 1e-6f ? dy / length : 0.0f;
+            float normalZ = length > 1e-6f ? dz / length : 0.0f;
 
-                float length = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
+            vertexConsumer.addVertex(matrix, (float)minX, (float)minY, (float)minZ)
+                    .setColor(red, green, blue, alpha)
+                    .setNormal(normalX, normalY, normalZ);
 
-                // Normalize
-                float normalX = length > 0 ? dx / length : 0;
-                float normalY = length > 0 ? dy / length : 0;
-                float normalZ = length > 0 ? dz / length : 0;
-
-                // Add the two vertices for this edge with slight offset
-                vertexConsumer.addVertex(matrix, (float)minX + offset, (float)minY + offset, (float)minZ + offset)
-                        .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
-
-                vertexConsumer.addVertex(matrix, (float)maxX + offset, (float)maxY + offset, (float)maxZ + offset)
-                        .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
-            });
-        }
+            vertexConsumer.addVertex(matrix, (float)maxX, (float)maxY, (float)maxZ)
+                    .setColor(red, green, blue, alpha)
+                    .setNormal(normalX, normalY, normalZ);
+        });
 
         poseStack.popPose();
+        bufferSource.endBatch(RenderType.lines());
     }
 }

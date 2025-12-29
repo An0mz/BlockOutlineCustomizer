@@ -32,12 +32,11 @@ public class BlockOutlineCustomizer {
 
     private void clientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            // Register both events
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(
                     me.anomz.blockoutline.client.ClientEvents::onClientTick
             );
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(
-                    me.anomz.blockoutline.client.OutlineRenderer::onRenderBlockHighlight
+                    me.anomz.blockoutline.client.OutlineRenderer::onRenderLevelStage
             );
         });
     }
