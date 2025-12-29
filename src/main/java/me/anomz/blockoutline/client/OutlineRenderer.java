@@ -6,7 +6,7 @@ import me.anomz.blockoutline.config.OutlineConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,10 +44,11 @@ public class OutlineRenderer {
         Camera camera = mc.gameRenderer.getMainCamera();
         PoseStack poseStack = event.getPoseStack();
 
-        double camX = camera.position().x;
-        double camY = camera.position().y;
-        double camZ = camera.position().z;
+        double camX = camera.getPosition().x;
+        double camY = camera.getPosition().y;
+        double camZ = camera.getPosition().z;
 
+        // Get color values
         final float red, green, blue, alpha;
 
         if (OutlineConfig.RGB_ENABLED.get()) {
@@ -67,9 +68,12 @@ public class OutlineRenderer {
 
         alpha = OutlineConfig.OPACITY.get().floatValue();
         final float lineWidth = OutlineConfig.WIDTH.get().floatValue();
-        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderTypes.LINES);
 
+        RenderSystem.lineWidth(lineWidth);
+
+// Use LINES render type without lighting
+        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.lines());
 
         poseStack.pushPose();
         poseStack.translate(
@@ -80,6 +84,7 @@ public class OutlineRenderer {
 
         Matrix4f matrix = poseStack.last().pose();
 
+// Draw outline using calculated normals
         shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
             float dx = (float)(maxX - minX);
             float dy = (float)(maxY - minY);
@@ -87,22 +92,21 @@ public class OutlineRenderer {
 
             float length = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
 
+            // Avoid division by zero
             float normalX = length > 1e-6f ? dx / length : 1.0f;
             float normalY = length > 1e-6f ? dy / length : 0.0f;
             float normalZ = length > 1e-6f ? dz / length : 0.0f;
 
             vertexConsumer.addVertex(matrix, (float)minX, (float)minY, (float)minZ)
                     .setColor(red, green, blue, alpha)
-                    .setNormal(normalX, normalY, normalZ)
-                    .setLineWidth(lineWidth);
+                    .setNormal(normalX, normalY, normalZ);
 
             vertexConsumer.addVertex(matrix, (float)maxX, (float)maxY, (float)maxZ)
                     .setColor(red, green, blue, alpha)
-                    .setNormal(normalX, normalY, normalZ)
-                    .setLineWidth(lineWidth);
+                    .setNormal(normalX, normalY, normalZ);
         });
 
         poseStack.popPose();
-        bufferSource.endBatch(RenderTypes.LINES);
+        bufferSource.endBatch(RenderType.lines());
     }
 }
