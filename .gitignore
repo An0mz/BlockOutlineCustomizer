@@ -1,0 +1,68 @@
+# Gradle
+.gradle/
+build/
+out/
+bin/
+run/
+
+# Eclipse
+*.launch
+.settings/
+.metadata
+.classpath
+.project
+.recommenders
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VSCode
+.vscode/
+
+# MacOS
+.DS_Store
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Minecraft development
+run/
+logs/
+*.log
+.mixin.out/
+crash-reports/
+
+# Generated sources
+src/generated/
+
+# Gradle wrapper (OPTIONAL - some devs commit this, some don't)
+# Uncomment if you want to ignore wrapper files:
+# gradle/wrapper/gradle-wrapper.jar
+# gradlew
+# gradlew.bat
+
+# Local config
+local.properties
+
+# Test outputs
+test-output/
+
+# Misc
+*.orig
+*.rej
+*.swp
+*.bak
+*.tmp
+*.class
+
+# Don't ignore these important files:
+!gradle-wrapper.jar

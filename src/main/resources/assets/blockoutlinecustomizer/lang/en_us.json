@@ -1,0 +1,14 @@
+{
+  "key.categories.blockoutlinecustomizer": "Block Outline Customizer",
+  "key.blockoutlinecustomizer.openconfig": "Open Block Outline Config",
+
+  "screen.blockoutlinecustomizer.title": "Block Outline Settings",
+
+  "config.blockoutlinecustomizer.red": "Red",
+  "config.blockoutlinecustomizer.green": "Green",
+  "config.blockoutlinecustomizer.blue": "Blue",
+  "config.blockoutlinecustomizer.opacity": "Opacity",
+  "config.blockoutlinecustomizer.width": "Width",
+  "config.blockoutlinecustomizer.rgb_enabled": "Enable RGB",
+  "config.blockoutlinecustomizer.rgb_speed": "RGB Speed"
+}
