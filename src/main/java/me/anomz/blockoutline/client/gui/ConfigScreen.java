@@ -30,51 +30,60 @@ public class ConfigScreen extends Screen {
     protected void init() {
         super.init();
 
-        int screenCenterX = this.minecraft.getWindow().getGuiScaledWidth() / 2;
-        int startY = 60;
-        int spacing = 35;
-        int sliderWidth = 200;
+        // Use scaled screen dimensions (respects GUI Scale setting)
+        int centerX = this.width / 2;
+        int centerY = this.height / 2;
+
+        // Make slider width responsive (max 200, but smaller on small screens)
+        int sliderWidth = Math.min(200, this.width - 40);
+
+        // Calculate spacing based on screen height
+        int spacing = Math.max(25, this.height / 12);
+
+        // Start Y position - centered vertically
+        int totalHeight = spacing * 6 + 20; // 7 rows of controls
+        int startY = Math.max(30, (this.height - totalHeight) / 2);
 
         // Red slider
-        this.redSlider = new ColorSlider(screenCenterX - sliderWidth/2, startY, sliderWidth, 20,
+        this.redSlider = new ColorSlider(centerX - sliderWidth/2, startY, sliderWidth, 20,
                 "Red", OutlineConfig.RED.get());
         this.addRenderableWidget(redSlider);
 
         // Green slider
-        this.greenSlider = new ColorSlider(screenCenterX - sliderWidth/2, startY + spacing, sliderWidth, 20,
+        this.greenSlider = new ColorSlider(centerX - sliderWidth/2, startY + spacing, sliderWidth, 20,
                 "Green", OutlineConfig.GREEN.get());
         this.addRenderableWidget(greenSlider);
 
         // Blue slider
-        this.blueSlider = new ColorSlider(screenCenterX - sliderWidth/2, startY + spacing * 2, sliderWidth, 20,
+        this.blueSlider = new ColorSlider(centerX - sliderWidth/2, startY + spacing * 2, sliderWidth, 20,
                 "Blue", OutlineConfig.BLUE.get());
         this.addRenderableWidget(blueSlider);
 
         // Opacity slider
-        this.opacitySlider = new OpacitySlider(screenCenterX - sliderWidth/2, startY + spacing * 3, sliderWidth, 20,
+        this.opacitySlider = new OpacitySlider(centerX - sliderWidth/2, startY + spacing * 3, sliderWidth, 20,
                 OutlineConfig.OPACITY.get());
         this.addRenderableWidget(opacitySlider);
 
         // Width slider
-        this.widthSlider = new WidthSlider(screenCenterX - sliderWidth/2, startY + spacing * 4, sliderWidth, 20,
+        this.widthSlider = new WidthSlider(centerX - sliderWidth/2, startY + spacing * 4, sliderWidth, 20,
                 OutlineConfig.WIDTH.get());
         this.addRenderableWidget(widthSlider);
 
         // RGB Checkbox
         this.addRenderableWidget(Checkbox.builder(Component.literal("Enable RGB"), this.font)
-                .pos(screenCenterX - 40, startY + spacing * 5)
+                .pos(centerX - 40, startY + spacing * 5)
                 .selected(rgbEnabled)
                 .onValueChange((checkbox, selected) -> rgbEnabled = selected)
                 .build());
 
         // RGB Speed slider
-        this.rgbSpeedSlider = new RGBSpeedSlider(screenCenterX - sliderWidth/2, startY + spacing * 6, sliderWidth, 20,
+        this.rgbSpeedSlider = new RGBSpeedSlider(centerX - sliderWidth/2, startY + spacing * 6, sliderWidth, 20,
                 OutlineConfig.RGB_SPEED.get());
         this.addRenderableWidget(rgbSpeedSlider);
 
         // Done button
         this.addRenderableWidget(Button.builder(Component.literal("Done"), b -> saveAndClose())
-                .bounds(screenCenterX - 100, this.height - 40, 200, 20).build());
+                .bounds(centerX - 100, this.height - 40, 200, 20).build());
     }
 
     @Override
@@ -82,8 +91,8 @@ public class ConfigScreen extends Screen {
         this.renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
 
-        int screenCenterX = this.minecraft.getWindow().getGuiScaledWidth() / 2;
-        graphics.drawCenteredString(this.font, this.title, screenCenterX, 20, 0xFFFFFF);
+        int centerX = this.width / 2;
+        graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFF);
     }
 
     private void saveAndClose() {
