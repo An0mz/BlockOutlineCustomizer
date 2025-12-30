@@ -83,7 +83,7 @@ public class OutlineRenderer {
         );
 
         Matrix4f matrix = poseStack.last().pose();
-        
+
         int passes = Math.max(1, (int)(lineWidth));
         float offsetIncrement = 0.001f;
 
