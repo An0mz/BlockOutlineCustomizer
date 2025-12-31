@@ -94,7 +94,7 @@ public class ConfigScreen extends Screen {
         super.render(graphics, mouseX, mouseY, partialTick);
 
         int centerX = this.width / 2;
-        graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFF);
+        graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFFFF);
     }
 
     private void saveAndClose() {
