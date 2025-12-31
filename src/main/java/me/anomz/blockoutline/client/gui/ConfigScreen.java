@@ -88,7 +88,6 @@ public class ConfigScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        // Use renderTransparentBackground instead (no blur)
         this.renderTransparentBackground(graphics);
 
         super.render(graphics, mouseX, mouseY, partialTick);
