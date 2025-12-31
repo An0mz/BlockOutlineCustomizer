@@ -88,15 +88,12 @@ public class ConfigScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        graphics.fill(0, 0, this.width, this.height, 0xC0101010);
+        this.renderTransparentBackground(graphics);
 
         super.render(graphics, mouseX, mouseY, partialTick);
-        int centerX = this.width / 2;
-        String text = "Block Outline Settings";
-        int textWidth = this.font.width(text);
-        int textX = centerX - (textWidth / 2);
 
-        graphics.drawString(this.font, text, textX, 30, 0xFFFFFFFF, true);
+        int centerX = this.width / 2;
+        graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFFFF);
     }
 
     private void saveAndClose() {
