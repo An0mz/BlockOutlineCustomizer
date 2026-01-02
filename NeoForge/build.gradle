@@ -36,9 +36,14 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
         }
 
-        data {
-            data()
-            programArguments.addAll '--mod', mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        clientData {
+            clientData()
+            programArguments.addAll(
+                    '--mod', mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+            )
         }
 
         configureEach {
@@ -46,6 +51,7 @@ neoForge {
             logLevel = org.slf4j.event.Level.DEBUG
         }
     }
+
 
     mods {
         "${mod_id}" {
