@@ -1,4 +1,4 @@
-package me.anomz.blockoutline.mixin;
+package me.anomz.blockoutline.neoforge.mixin;
 
 import net.minecraft.client.renderer.LevelRenderer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,7 +11,6 @@ public class LevelRendererMixin {
 
     @Inject(method = "renderHitOutline", at = @At("HEAD"), cancellable = true)
     private void cancelVanillaOutline(CallbackInfo ci) {
-        // Cancel vanilla outline rendering
         ci.cancel();
     }
 }
