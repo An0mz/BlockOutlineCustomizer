@@ -4,7 +4,7 @@ plugins {
 }
 
 base {
-    archivesName = "${mod_id}-fabric"
+    archivesName = "boc-${minecraft_version}-fabric"
 }
 
 version = mod_version
