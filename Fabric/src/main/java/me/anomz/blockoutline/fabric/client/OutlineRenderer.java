@@ -1,4 +1,4 @@
-package me.anomz.blockoutline.fabric.client.rendering;
+package me.anomz.blockoutline.fabric.client;
 
 import me.anomz.blockoutline.platform.Services;
 import me.anomz.blockoutline.platform.ConfigHelper;
