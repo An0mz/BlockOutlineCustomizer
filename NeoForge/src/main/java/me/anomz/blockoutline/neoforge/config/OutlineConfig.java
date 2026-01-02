@@ -1,4 +1,4 @@
-package me.anomz.blockoutline.config;
+package me.anomz.blockoutline.neoforge.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
