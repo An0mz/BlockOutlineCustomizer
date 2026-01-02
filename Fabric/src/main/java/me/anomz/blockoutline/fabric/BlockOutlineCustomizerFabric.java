@@ -1,6 +1,5 @@
 package me.anomz.blockoutline.fabric;
 
-import me.anomz.blockoutline.fabric.client.ClientEvents;
 import me.anomz.blockoutline.fabric.client.KeyBindings;
 import net.fabricmc.api.ClientModInitializer;
 import org.slf4j.Logger;
@@ -15,8 +14,5 @@ public class BlockOutlineCustomizerFabric implements ClientModInitializer {
 
         // Register key bindings
         KeyBindings.register();
-
-        // Register events
-        ClientEvents.register();
     }
 }

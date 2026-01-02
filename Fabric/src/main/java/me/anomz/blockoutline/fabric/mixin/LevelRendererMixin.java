@@ -1,50 +1,45 @@
-package me.anomz.blockoutline.fabric.client;
+package me.anomz.blockoutline.fabric.mixin;
 
 import me.anomz.blockoutline.platform.Services;
 import me.anomz.blockoutline.platform.ConfigHelper;
 import com.mojang.blaze3d.vertex.*;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.state.BlockOutlineRenderState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Matrix4f;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.Color;
 
-/**
- * Fabric 1.21.1 outline renderer
- */
-public class OutlineRenderer {
+@Mixin(LevelRenderer.class)
+public class LevelRendererMixin {
 
-    public static boolean onRenderBlockOutline(WorldRenderContext worldRenderContext, WorldRenderContext.BlockOutlineContext blockOutlineContext) {
-        // Cancel vanilla outline
-        if (blockOutlineContext.blockPos() == null) {
-            return true;
-        }
+    @Inject(method = "renderHitOutline", at = @At("HEAD"), cancellable = true)
+    private void onRenderHitOutline(
+            PoseStack poseStack,
+            VertexConsumer vertexConsumer,
+            double camX,
+            double camY,
+            double camZ,
+            BlockOutlineRenderState blockOutlineRenderState,
+            int packedColor,
+            CallbackInfo ci
+    ) {
+        ci.cancel();
 
-        BlockPos blockPos = blockOutlineContext.blockPos();
-        Level level = worldRenderContext.world();
-        Camera camera = worldRenderContext.camera();
-        PoseStack poseStack = worldRenderContext.matrixStack();
-
-        BlockState blockState = level.getBlockState(blockPos);
-        VoxelShape shape = blockState.getShape(level, blockPos);
+        BlockPos blockPos = blockOutlineRenderState.pos();
+        VoxelShape shape = blockOutlineRenderState.shape();
 
         if (shape.isEmpty()) {
-            return false; // Don't cancel, let vanilla handle it
+            return;
         }
 
         ConfigHelper config = Services.getConfigHelper();
 
-        // Get camera position
-        double camX = camera.getPosition().x;
-        double camY = camera.getPosition().y;
-        double camZ = camera.getPosition().z;
-
-        // Get colors
         final float red, green, blue, alpha;
 
         if (config.isRgbEnabled()) {
@@ -67,16 +62,13 @@ public class OutlineRenderer {
 
         poseStack.pushPose();
         poseStack.translate(
-                blockPos.getX() - camX,
-                blockPos.getY() - camY,
-                blockPos.getZ() - camZ
+                (double)blockPos.getX() - camX,
+                (double)blockPos.getY() - camY,
+                (double)blockPos.getZ() - camZ
         );
 
         Matrix4f matrix = poseStack.last().pose();
 
-        VertexConsumer vertexConsumer = worldRenderContext.consumers().getBuffer(RenderType.lines());
-
-        // Multi-pass rendering for line width (1.21.1 doesn't have setLineWidth)
         int passes = Math.max(1, (int)lineWidth);
         float offsetIncrement = 0.001f;
 
@@ -105,7 +97,5 @@ public class OutlineRenderer {
         }
 
         poseStack.popPose();
-
-        return false; // Cancel vanilla outline rendering
     }
 }

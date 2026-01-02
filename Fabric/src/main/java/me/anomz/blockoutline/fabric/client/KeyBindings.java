@@ -14,7 +14,7 @@ public class KeyBindings {
         openConfigKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key." + Constants.MOD_ID + ".openconfig",
                 GLFW.GLFW_KEY_O,
-                "key.categories." + Constants.MOD_ID
+                KeyMapping.Category.MISC
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
