@@ -1,0 +1,16 @@
+plugins {
+    id 'java-library'
+}
+
+base {
+    archivesName = "${mod_id}-common"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+dependencies {
+    // No dependencies - this is just shared code
+}
