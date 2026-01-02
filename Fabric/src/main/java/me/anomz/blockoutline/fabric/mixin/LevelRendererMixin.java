@@ -27,6 +27,7 @@ public class LevelRendererMixin {
             double camZ,
             BlockOutlineRenderState blockOutlineRenderState,
             int packedColor,
+            float partialTick,
             CallbackInfo ci
     ) {
         ci.cancel();
@@ -88,11 +89,13 @@ public class LevelRendererMixin {
 
                 vertexConsumer.addVertex(matrix, (float)minX + offset, (float)minY + offset, (float)minZ + offset)
                         .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
+                        .setNormal(normalX, normalY, normalZ)
+                        .setLineWidth(lineWidth);;
 
                 vertexConsumer.addVertex(matrix, (float)maxX + offset, (float)maxY + offset, (float)maxZ + offset)
                         .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
+                        .setNormal(normalX, normalY, normalZ)
+                        .setLineWidth(lineWidth);;
             });
         }
 

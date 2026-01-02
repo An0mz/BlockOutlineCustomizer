@@ -6,7 +6,7 @@ import me.anomz.blockoutline.neoforge.config.OutlineConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,11 +44,10 @@ public class OutlineRenderer {
         Camera camera = mc.gameRenderer.getMainCamera();
         PoseStack poseStack = event.getPoseStack();
 
-        double camX = camera.getPosition().x;
-        double camY = camera.getPosition().y;
-        double camZ = camera.getPosition().z;
+        double camX = camera.position().x;
+        double camY = camera.position().y;
+        double camZ = camera.position().z;
 
-        // Get color values
         final float red, green, blue, alpha;
 
         if (OutlineConfig.RGB_ENABLED.get()) {
@@ -68,12 +67,9 @@ public class OutlineRenderer {
 
         alpha = OutlineConfig.OPACITY.get().floatValue();
         final float lineWidth = OutlineConfig.WIDTH.get().floatValue();
-
-        RenderSystem.lineWidth(lineWidth);
-
-// Use LINES render type without lighting
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.lines());
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderTypes.LINES);
+
 
         poseStack.pushPose();
         poseStack.translate(
@@ -84,33 +80,29 @@ public class OutlineRenderer {
 
         Matrix4f matrix = poseStack.last().pose();
 
-        int passes = Math.max(1, (int)(lineWidth));
-        float offsetIncrement = 0.001f;
+        shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            float dx = (float)(maxX - minX);
+            float dy = (float)(maxY - minY);
+            float dz = (float)(maxZ - minZ);
 
-        for (int pass = 0; pass < passes; pass++) {
-            float offset = pass * offsetIncrement;
+            float length = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
-                float dx = (float)(maxX - minX);
-                float dy = (float)(maxY - minY);
-                float dz = (float)(maxZ - minZ);
-                float length = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
+            float normalX = length > 1e-6f ? dx / length : 1.0f;
+            float normalY = length > 1e-6f ? dy / length : 0.0f;
+            float normalZ = length > 1e-6f ? dz / length : 0.0f;
 
-                float normalX = length > 1e-6f ? dx / length : 1.0f;
-                float normalY = length > 1e-6f ? dy / length : 0.0f;
-                float normalZ = length > 1e-6f ? dz / length : 0.0f;
+            vertexConsumer.addVertex(matrix, (float)minX, (float)minY, (float)minZ)
+                    .setColor(red, green, blue, alpha)
+                    .setNormal(normalX, normalY, normalZ)
+                    .setLineWidth(lineWidth);
 
-                vertexConsumer.addVertex(matrix, (float)minX + offset, (float)minY + offset, (float)minZ + offset)
-                        .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
-
-                vertexConsumer.addVertex(matrix, (float)maxX + offset, (float)maxY + offset, (float)maxZ + offset)
-                        .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
-            });
-        }
+            vertexConsumer.addVertex(matrix, (float)maxX, (float)maxY, (float)maxZ)
+                    .setColor(red, green, blue, alpha)
+                    .setNormal(normalX, normalY, normalZ)
+                    .setLineWidth(lineWidth);
+        });
 
         poseStack.popPose();
-        bufferSource.endBatch(RenderType.lines());
+        bufferSource.endBatch(RenderTypes.LINES);
     }
 }
