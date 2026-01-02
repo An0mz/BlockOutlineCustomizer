@@ -1,11 +1,11 @@
-package me.anomz.blockoutline.client.gui;
+package me.anomz.blockoutline.fabric.client.gui;
 
-import me.anomz.blockoutline.platform.Services;
 import me.anomz.blockoutline.platform.ConfigHelper;
+import me.anomz.blockoutline.platform.Services;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
-import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
