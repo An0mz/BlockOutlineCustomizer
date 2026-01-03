@@ -94,13 +94,15 @@ public class OutlineRenderer {
                 float normalY = length > 1e-6f ? dy / length : 0.0f;
                 float normalZ = length > 1e-6f ? dz / length : 0.0f;
 
-                vertexConsumer.addVertex(matrix, (float)minX + offset, (float)minY + offset, (float)minZ + offset)
-                        .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
+                vertexConsumer.vertex(matrix, (float)minX + offset, (float)minY + offset, (float)minZ + offset)
+                        .color(red, green, blue, alpha)
+                        .normal(normalX, normalY, normalZ)
+                        .endVertex();;
 
-                vertexConsumer.addVertex(matrix, (float)maxX + offset, (float)maxY + offset, (float)maxZ + offset)
-                        .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
+                vertexConsumer.vertex(matrix, (float)maxX + offset, (float)maxY + offset, (float)maxZ + offset)
+                        .color(red, green, blue, alpha)
+                        .normal(normalX, normalY, normalZ)
+                        .endVertex();;
             });
         }
 
