@@ -1,4 +1,4 @@
-package me.anomz.blockoutline.client.gui;
+package me.anomz.blockoutline.neoforge.client.gui;
 
 import me.anomz.blockoutline.platform.ConfigHelper;
 import me.anomz.blockoutline.platform.Services;
