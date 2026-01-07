@@ -6,74 +6,148 @@ import me.anomz.blockoutline.platform.ConfigHelper;
 public class FabricConfigHelper implements ConfigHelper {
     private static final OutlineConfig CONFIG = OutlineConfig.load();
 
+    // Outline getters
     @Override
-    public int getRed() {
-        return CONFIG.red;
+    public int getOutlineRed() {
+        return CONFIG.outlineRed;
     }
 
     @Override
-    public int getGreen() {
-        return CONFIG.green;
+    public int getOutlineGreen() {
+        return CONFIG.outlineGreen;
     }
 
     @Override
-    public int getBlue() {
-        return CONFIG.blue;
+    public int getOutlineBlue() {
+        return CONFIG.outlineBlue;
     }
 
     @Override
-    public double getOpacity() {
-        return CONFIG.opacity;
+    public double getOutlineOpacity() {
+        return CONFIG.outlineOpacity;
     }
 
     @Override
-    public double getWidth() {
-        return CONFIG.width;
+    public double getOutlineWidth() {
+        return CONFIG.outlineWidth;
     }
 
     @Override
-    public boolean isRgbEnabled() {
-        return CONFIG.rgbEnabled;
+    public boolean isOutlineRgbEnabled() {
+        return CONFIG.outlineRgbEnabled;
     }
 
     @Override
-    public double getRgbSpeed() {
-        return CONFIG.rgbSpeed;
+    public double getOutlineRgbSpeed() {
+        return CONFIG.outlineRgbSpeed;
+    }
+
+    // Outline setters
+    @Override
+    public void setOutlineRed(int red) {
+        CONFIG.outlineRed = red;
     }
 
     @Override
-    public void setRed(int red) {
-        CONFIG.red = red;
+    public void setOutlineGreen(int green) {
+        CONFIG.outlineGreen = green;
     }
 
     @Override
-    public void setGreen(int green) {
-        CONFIG.green = green;
+    public void setOutlineBlue(int blue) {
+        CONFIG.outlineBlue = blue;
     }
 
     @Override
-    public void setBlue(int blue) {
-        CONFIG.blue = blue;
+    public void setOutlineOpacity(double opacity) {
+        CONFIG.outlineOpacity = opacity;
     }
 
     @Override
-    public void setOpacity(double opacity) {
-        CONFIG.opacity = opacity;
+    public void setOutlineWidth(double width) {
+        CONFIG.outlineWidth = width;
     }
 
     @Override
-    public void setWidth(double width) {
-        CONFIG.width = width;
+    public void setOutlineRgbEnabled(boolean enabled) {
+        CONFIG.outlineRgbEnabled = enabled;
     }
 
     @Override
-    public void setRgbEnabled(boolean enabled) {
-        CONFIG.rgbEnabled = enabled;
+    public void setOutlineRgbSpeed(double speed) {
+        CONFIG.outlineRgbSpeed = speed;
+    }
+
+    // Fill getters
+    @Override
+    public boolean isFillEnabled() {
+        return CONFIG.fillEnabled;
     }
 
     @Override
-    public void setRgbSpeed(double speed) {
-        CONFIG.rgbSpeed = speed;
+    public int getFillRed() {
+        return CONFIG.fillRed;
+    }
+
+    @Override
+    public int getFillGreen() {
+        return CONFIG.fillGreen;
+    }
+
+    @Override
+    public int getFillBlue() {
+        return CONFIG.fillBlue;
+    }
+
+    @Override
+    public double getFillOpacity() {
+        return CONFIG.fillOpacity;
+    }
+
+    @Override
+    public boolean isFillRgbEnabled() {
+        return CONFIG.fillRgbEnabled;
+    }
+
+    @Override
+    public double getFillRgbSpeed() {
+        return CONFIG.fillRgbSpeed;
+    }
+
+    // Fill setters
+    @Override
+    public void setFillEnabled(boolean enabled) {
+        CONFIG.fillEnabled = enabled;
+    }
+
+    @Override
+    public void setFillRed(int red) {
+        CONFIG.fillRed = red;
+    }
+
+    @Override
+    public void setFillGreen(int green) {
+        CONFIG.fillGreen = green;
+    }
+
+    @Override
+    public void setFillBlue(int blue) {
+        CONFIG.fillBlue = blue;
+    }
+
+    @Override
+    public void setFillOpacity(double opacity) {
+        CONFIG.fillOpacity = opacity;
+    }
+
+    @Override
+    public void setFillRgbEnabled(boolean enabled) {
+        CONFIG.fillRgbEnabled = enabled;
+    }
+
+    @Override
+    public void setFillRgbSpeed(double speed) {
+        CONFIG.fillRgbSpeed = speed;
     }
 
     @Override

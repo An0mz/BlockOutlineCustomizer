@@ -1,4 +1,4 @@
-package me.anomz.blockoutline.fabric.client.rendering;
+package me.anomz.blockoutline.fabric.client;
 
 import me.anomz.blockoutline.platform.Services;
 import me.anomz.blockoutline.platform.ConfigHelper;
@@ -14,13 +14,9 @@ import org.joml.Matrix4f;
 
 import java.awt.Color;
 
-/**
- * Fabric 1.21.1 outline renderer
- */
 public class OutlineRenderer {
 
     public static boolean onRenderBlockOutline(WorldRenderContext worldRenderContext, WorldRenderContext.BlockOutlineContext blockOutlineContext) {
-        // Cancel vanilla outline
         if (blockOutlineContext.blockPos() == null) {
             return true;
         }
@@ -34,36 +30,14 @@ public class OutlineRenderer {
         VoxelShape shape = blockState.getShape(level, blockPos);
 
         if (shape.isEmpty()) {
-            return false; // Don't cancel, let vanilla handle it
+            return false;
         }
 
         ConfigHelper config = Services.getConfigHelper();
 
-        // Get camera position
         double camX = camera.getPosition().x;
         double camY = camera.getPosition().y;
         double camZ = camera.getPosition().z;
-
-        // Get colors
-        final float red, green, blue, alpha;
-
-        if (config.isRgbEnabled()) {
-            float speed = (float)config.getRgbSpeed();
-            float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
-            float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
-            Color color = Color.getHSBColor(hue, 1.0f, 1.0f);
-
-            red = color.getRed() / 255.0f;
-            green = color.getGreen() / 255.0f;
-            blue = color.getBlue() / 255.0f;
-        } else {
-            red = config.getRed() / 255.0f;
-            green = config.getGreen() / 255.0f;
-            blue = config.getBlue() / 255.0f;
-        }
-
-        alpha = (float)config.getOpacity();
-        final float lineWidth = (float)config.getWidth();
 
         poseStack.pushPose();
         poseStack.translate(
@@ -74,9 +48,42 @@ public class OutlineRenderer {
 
         Matrix4f matrix = poseStack.last().pose();
 
-        VertexConsumer vertexConsumer = worldRenderContext.consumers().getBuffer(RenderType.lines());
+        // Render fill first
+        if (config.isFillEnabled()) {
+            renderFill(worldRenderContext, shape, matrix, config);
+        }
 
-        // Multi-pass rendering for line width (1.21.1 doesn't have setLineWidth)
+        // Render outline
+        renderOutline(worldRenderContext, shape, matrix, config);
+
+        poseStack.popPose();
+
+        return false;
+    }
+
+    private static void renderOutline(WorldRenderContext context, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
+        VertexConsumer vertexConsumer = context.consumers().getBuffer(RenderType.lines());
+
+        float red, green, blue, alpha;
+
+        if (config.isOutlineRgbEnabled()) {
+            float speed = (float)config.getOutlineRgbSpeed();
+            float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
+            float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
+            Color color = Color.getHSBColor(hue, 1.0f, 1.0f);
+
+            red = color.getRed() / 255.0f;
+            green = color.getGreen() / 255.0f;
+            blue = color.getBlue() / 255.0f;
+        } else {
+            red = config.getOutlineRed() / 255.0f;
+            green = config.getOutlineGreen() / 255.0f;
+            blue = config.getOutlineBlue() / 255.0f;
+        }
+
+        alpha = (float)config.getOutlineOpacity();
+        float lineWidth = (float)config.getOutlineWidth();
+
         int passes = Math.max(1, (int)lineWidth);
         float offsetIncrement = 0.001f;
 
@@ -97,17 +104,85 @@ public class OutlineRenderer {
                 vertexConsumer.vertex(matrix, (float)minX + offset, (float)minY + offset, (float)minZ + offset)
                         .color(red, green, blue, alpha)
                         .normal(normalX, normalY, normalZ)
-                        .endVertex();;
+                        .endVertex();
 
                 vertexConsumer.vertex(matrix, (float)maxX + offset, (float)maxY + offset, (float)maxZ + offset)
                         .color(red, green, blue, alpha)
                         .normal(normalX, normalY, normalZ)
-                        .endVertex();;
+                        .endVertex();
             });
         }
+    }
 
-        poseStack.popPose();
+    private static void renderFill(WorldRenderContext context, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
+        VertexConsumer vertexConsumer = context.consumers().getBuffer(RenderType.debugQuads());
 
-        return false; // Cancel vanilla outline rendering
+        float red, green, blue, alpha;
+
+        if (config.isFillRgbEnabled()) {
+            float speed = (float)config.getFillRgbSpeed();
+            float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
+            float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
+            Color color = Color.getHSBColor(hue, 1.0f, 1.0f);
+
+            red = color.getRed() / 255.0f;
+            green = color.getGreen() / 255.0f;
+            blue = color.getBlue() / 255.0f;
+        } else {
+            red = config.getFillRed() / 255.0f;
+            green = config.getFillGreen() / 255.0f;
+            blue = config.getFillBlue() / 255.0f;
+        }
+
+        alpha = (float)config.getFillOpacity();
+
+        float offset = 0.001f;
+
+        // Render all faces of the shape
+        shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            // Making sure the fill is not clipping with texture
+            float sMinX = (float)minX - offset;
+            float sMinY = (float)minY - offset;
+            float sMinZ = (float)minZ - offset;
+            float sMaxX = (float)maxX + offset;
+            float sMaxY = (float)maxY + offset;
+            float sMaxZ = (float)maxZ + offset;
+
+            // Bottom face (Y-)
+            vertexConsumer.vertex(matrix, sMinX, sMinY, sMinZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMinY, sMinZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMinY, sMaxZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMinX, sMinY, sMaxZ).color(red, green, blue, alpha).endVertex();
+
+            // Top face (Y+)
+            vertexConsumer.vertex(matrix, sMinX, sMaxY, sMinZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMinX, sMaxY, sMaxZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMaxY, sMaxZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMaxY, sMinZ).color(red, green, blue, alpha).endVertex();
+
+            // North face (Z-)
+            vertexConsumer.vertex(matrix, sMinX, sMinY, sMinZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMinX, sMaxY, sMinZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMaxY, sMinZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMinY, sMinZ).color(red, green, blue, alpha).endVertex();
+
+            // South face (Z+)
+            vertexConsumer.vertex(matrix, sMinX, sMinY, sMaxZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMinY, sMaxZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMaxY, sMaxZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMinX, sMaxY, sMaxZ).color(red, green, blue, alpha).endVertex();
+
+            // West face (X-)
+            vertexConsumer.vertex(matrix, sMinX, sMinY, sMinZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMinX, sMinY, sMaxZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMinX, sMaxY, sMaxZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMinX, sMaxY, sMinZ).color(red, green, blue, alpha).endVertex();
+
+            // East face (X+)
+            vertexConsumer.vertex(matrix, sMaxX, sMinY, sMinZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMaxY, sMinZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMaxY, sMaxZ).color(red, green, blue, alpha).endVertex();
+            vertexConsumer.vertex(matrix, sMaxX, sMinY, sMaxZ).color(red, green, blue, alpha).endVertex();
+        });
     }
 }

@@ -1,9 +1,9 @@
 package me.anomz.blockoutline.neoforge;
 
 import me.anomz.blockoutline.Constants;
+import me.anomz.blockoutline.neoforge.client.OutlineRenderer;
 import me.anomz.blockoutline.neoforge.client.ClientEvents;
 import me.anomz.blockoutline.neoforge.client.KeyBindings;
-import me.anomz.blockoutline.neoforge.client.OutlineRenderer;
 import me.anomz.blockoutline.neoforge.config.OutlineConfig;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
