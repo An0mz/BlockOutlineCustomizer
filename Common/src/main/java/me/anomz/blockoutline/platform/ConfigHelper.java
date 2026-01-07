@@ -1,30 +1,39 @@
 package me.anomz.blockoutline.platform;
 
-/**
- * Platform-agnostic config interface
- * Implemented differently by Fabric and NeoForge
- */
 public interface ConfigHelper {
-    int getRed();
-    void setRed(int value);
+    // Outline settings
+    int getOutlineRed();
+    int getOutlineGreen();
+    int getOutlineBlue();
+    double getOutlineOpacity();
+    double getOutlineWidth();
+    boolean isOutlineRgbEnabled();
+    double getOutlineRgbSpeed();
 
-    int getGreen();
-    void setGreen(int value);
+    void setOutlineRed(int red);
+    void setOutlineGreen(int green);
+    void setOutlineBlue(int blue);
+    void setOutlineOpacity(double opacity);
+    void setOutlineWidth(double width);
+    void setOutlineRgbEnabled(boolean enabled);
+    void setOutlineRgbSpeed(double speed);
 
-    int getBlue();
-    void setBlue(int value);
+    // Fill settings
+    boolean isFillEnabled();
+    int getFillRed();
+    int getFillGreen();
+    int getFillBlue();
+    double getFillOpacity();
+    boolean isFillRgbEnabled();
+    double getFillRgbSpeed();
 
-    double getOpacity();
-    void setOpacity(double value);
-
-    double getWidth();
-    void setWidth(double value);
-
-    boolean isRgbEnabled();
-    void setRgbEnabled(boolean value);
-
-    double getRgbSpeed();
-    void setRgbSpeed(double value);
+    void setFillEnabled(boolean enabled);
+    void setFillRed(int red);
+    void setFillGreen(int green);
+    void setFillBlue(int blue);
+    void setFillOpacity(double opacity);
+    void setFillRgbEnabled(boolean enabled);
+    void setFillRgbSpeed(double speed);
 
     void save();
 }
