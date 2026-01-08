@@ -1,8 +1,9 @@
 package me.anomz.blockoutline.neoforge.client;
 
-import me.anomz.blockoutline.platform.Services;
-import me.anomz.blockoutline.platform.ConfigHelper;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import me.anomz.blockoutline.platform.ConfigHelper;
+import me.anomz.blockoutline.platform.Services;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -10,26 +11,30 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
-import java.awt.Color;
+import java.awt.*;
 
-/**
- * NeoForge outline renderer with fill support
- */
 public class OutlineRenderer {
 
-    public static void onRenderBlockHighlight(RenderHighlightEvent.Block event) {
-        event.setCanceled(true);
-
+    // Use the specific subclass!
+    public static void onRenderLevelStage(RenderLevelStageEvent.AfterTranslucentBlocks event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) {
+        if (mc.level == null || mc.hitResult == null) {
             return;
         }
 
-        BlockPos blockPos = event.getTarget().getBlockPos();
+        HitResult hitResult = mc.hitResult;
+        if (hitResult.getType() != HitResult.Type.BLOCK) {
+            return;
+        }
+
+        BlockHitResult blockHitResult = (BlockHitResult) hitResult;
+        BlockPos blockPos = blockHitResult.getBlockPos();
         Level level = mc.level;
         BlockState blockState = level.getBlockState(blockPos);
         VoxelShape shape = blockState.getShape(level, blockPos);
@@ -38,11 +43,10 @@ public class OutlineRenderer {
             return;
         }
 
-        Camera camera = event.getCamera();
-        PoseStack poseStack = event.getPoseStack();
-        MultiBufferSource multiBufferSource = event.getMultiBufferSource();
-
         ConfigHelper config = Services.getConfigHelper();
+        Camera camera = mc.gameRenderer.getMainCamera();
+        PoseStack poseStack = event.getPoseStack();
+        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
         double camX = camera.getPosition().x;
         double camY = camera.getPosition().y;
@@ -57,20 +61,18 @@ public class OutlineRenderer {
 
         Matrix4f matrix = poseStack.last().pose();
 
-        // Render fill first
+        // Render fill first (so outline renders on top)
         if (config.isFillEnabled()) {
-            renderFill(multiBufferSource, shape, matrix, config);
+            renderFill(bufferSource, shape, matrix, config);
         }
 
         // Render outline
-        renderOutline(multiBufferSource, shape, matrix, config);
+        renderOutline(bufferSource, shape, matrix, config);
 
         poseStack.popPose();
     }
 
-    private static void renderOutline(MultiBufferSource multiBufferSource, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
-        VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.lines());
-
+    private static void renderOutline(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
         float red, green, blue, alpha;
 
         if (config.isOutlineRgbEnabled()) {
@@ -91,6 +93,10 @@ public class OutlineRenderer {
         alpha = (float)config.getOutlineOpacity();
         float lineWidth = (float)config.getOutlineWidth();
 
+        RenderSystem.lineWidth(lineWidth);
+
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.lines());
+
         int passes = Math.max(1, (int)lineWidth);
         float offsetIncrement = 0.001f;
 
@@ -101,7 +107,6 @@ public class OutlineRenderer {
                 float dx = (float)(maxX - minX);
                 float dy = (float)(maxY - minY);
                 float dz = (float)(maxZ - minZ);
-
                 float length = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
 
                 float normalX = length > 1e-6f ? dx / length : 1.0f;
@@ -117,11 +122,11 @@ public class OutlineRenderer {
                         .setNormal(normalX, normalY, normalZ);
             });
         }
+
+        bufferSource.endBatch(RenderType.lines());
     }
 
-    private static void renderFill(MultiBufferSource multiBufferSource, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
-        VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.debugQuads());
-
+    private static void renderFill(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
         float red, green, blue, alpha;
 
         if (config.isFillRgbEnabled()) {
@@ -140,12 +145,11 @@ public class OutlineRenderer {
         }
 
         alpha = (float)config.getFillOpacity();
-
         float offset = 0.001f;
 
-        // Render all faces of the shape
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.debugQuads());
+
         shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
-            // Making sure the fill is not clipping with texture
             float sMinX = (float)minX - offset;
             float sMinY = (float)minY - offset;
             float sMinZ = (float)minZ - offset;
@@ -189,5 +193,7 @@ public class OutlineRenderer {
             vertexConsumer.addVertex(matrix, sMaxX, sMaxY, sMaxZ).setColor(red, green, blue, alpha);
             vertexConsumer.addVertex(matrix, sMaxX, sMinY, sMaxZ).setColor(red, green, blue, alpha);
         });
+
+        bufferSource.endBatch(RenderType.debugQuads());
     }
 }
