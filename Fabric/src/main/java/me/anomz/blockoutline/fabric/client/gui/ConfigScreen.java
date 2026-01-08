@@ -216,8 +216,6 @@ public class ConfigScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        graphics.fill(0, 0, this.width, this.height, 0xE0101010);
-
         super.render(graphics, mouseX, mouseY, partialTick);
 
         int centerX = this.width / 2;
@@ -225,10 +223,10 @@ public class ConfigScreen extends Screen {
         int leftColumnCenter = centerX - columnOffset;
         int rightColumnCenter = centerX + columnOffset;
 
-        graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFF);
-
-        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 42, 0x00FFFF);
-        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 42, 0x00FFFF);
+        graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFFFF);
+        
+        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 42, 0xFF00FFFF);
+        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 42, 0xFF00FFFF);
     }
 
     private void saveAndClose() {
