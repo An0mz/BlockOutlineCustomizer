@@ -12,13 +12,23 @@ public class OutlineConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("blockoutlinecustomizer.json");
 
-    public int red = 0;
-    public int green = 255;
-    public int blue = 255;
-    public double opacity = 1.0;
-    public double width = 3.0;
-    public boolean rgbEnabled = false;
-    public double rgbSpeed = 1.0;
+    // Outline settings
+    public int outlineRed = 0;
+    public int outlineGreen = 255;
+    public int outlineBlue = 255;
+    public double outlineOpacity = 1.0;
+    public double outlineWidth = 3.0;
+    public boolean outlineRgbEnabled = false;
+    public double outlineRgbSpeed = 1.0;
+
+    // Fill settings
+    public boolean fillEnabled = false;
+    public int fillRed = 255;
+    public int fillGreen = 255;
+    public int fillBlue = 255;
+    public double fillOpacity = 0.3;
+    public boolean fillRgbEnabled = false;
+    public double fillRgbSpeed = 1.0;
 
     public static OutlineConfig load() {
         if (Files.exists(CONFIG_PATH)) {
@@ -29,7 +39,9 @@ public class OutlineConfig {
                 e.printStackTrace();
             }
         }
-        return new OutlineConfig();
+        OutlineConfig config = new OutlineConfig();
+        config.save();
+        return config;
     }
 
     public void save() {
