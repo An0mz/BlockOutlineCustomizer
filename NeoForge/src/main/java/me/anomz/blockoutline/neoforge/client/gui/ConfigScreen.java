@@ -1,110 +1,254 @@
 package me.anomz.blockoutline.neoforge.client.gui;
 
-import me.anomz.blockoutline.neoforge.config.OutlineConfig;
+import me.anomz.blockoutline.platform.ConfigHelper;
+import me.anomz.blockoutline.platform.Services;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
-import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class ConfigScreen extends Screen {
     private final Screen lastScreen;
+    private final ConfigHelper config;
 
-    // Color sliders
-    private ColorSlider redSlider;
-    private ColorSlider greenSlider;
-    private ColorSlider blueSlider;
-    private OpacitySlider opacitySlider;
-    private WidthSlider widthSlider;
-    private RGBSpeedSlider rgbSpeedSlider;
-    private boolean rgbEnabled;
+    // Outline sliders
+    private ColorSlider outlineRedSlider;
+    private ColorSlider outlineGreenSlider;
+    private ColorSlider outlineBlueSlider;
+    private OpacitySlider outlineOpacitySlider;
+    private WidthSlider outlineWidthSlider;
+    private RGBSpeedSlider outlineRgbSpeedSlider;
+    private boolean outlineRgbEnabled;
+
+    // Fill sliders
+    private Checkbox fillEnabledCheckbox;
+    private ColorSlider fillRedSlider;
+    private ColorSlider fillGreenSlider;
+    private ColorSlider fillBlueSlider;
+    private OpacitySlider fillOpacitySlider;
+    private RGBSpeedSlider fillRgbSpeedSlider;
+    private boolean fillRgbEnabled;
 
     public ConfigScreen(Screen lastScreen) {
-        super(Component.literal("Block Outline Settings"));
+        super(Component.literal("Block Outline Customizer"));
         this.lastScreen = lastScreen;
-        this.rgbEnabled = OutlineConfig.RGB_ENABLED.get();
+        this.config = Services.getConfigHelper();
+        this.outlineRgbEnabled = config.isOutlineRgbEnabled();
+        this.fillRgbEnabled = config.isFillRgbEnabled();
     }
 
     @Override
     protected void init() {
         super.init();
 
-        // Use scaled screen dimensions (respects GUI Scale setting)
         int centerX = this.width / 2;
-        int centerY = this.height / 2;
+        int columnOffset = 120;
+        int leftColumnCenter = centerX - columnOffset;
+        int rightColumnCenter = centerX + columnOffset;
+        int sliderWidth = 150;
+        int spacing = 26;
 
-        // Make slider width responsive (max 200, but smaller on small screens)
-        int sliderWidth = Math.min(200, this.width - 40);
+        // --- OUTLINE SECTION (LEFT) ---
+        int outlineY = 60;
 
-        // Calculate spacing based on screen height
-        int spacing = Math.max(25, this.height / 12);
-
-        // Start Y position - centered vertically
-        int totalHeight = spacing * 6 + 20; // 7 rows of controls
-        int startY = Math.max(30, (this.height - totalHeight) / 2);
-
-        // Red slider
-        this.redSlider = new ColorSlider(centerX - sliderWidth/2, startY, sliderWidth, 20,
-                "Red", OutlineConfig.RED.get());
-        this.addRenderableWidget(redSlider);
-
-        // Green slider
-        this.greenSlider = new ColorSlider(centerX - sliderWidth/2, startY + spacing, sliderWidth, 20,
-                "Green", OutlineConfig.GREEN.get());
-        this.addRenderableWidget(greenSlider);
-
-        // Blue slider
-        this.blueSlider = new ColorSlider(centerX - sliderWidth/2, startY + spacing * 2, sliderWidth, 20,
-                "Blue", OutlineConfig.BLUE.get());
-        this.addRenderableWidget(blueSlider);
-
-        // Opacity slider
-        this.opacitySlider = new OpacitySlider(centerX - sliderWidth/2, startY + spacing * 3, sliderWidth, 20,
-                OutlineConfig.OPACITY.get());
-        this.addRenderableWidget(opacitySlider);
-
-        // Width slider
-        this.widthSlider = new WidthSlider(centerX - sliderWidth/2, startY + spacing * 4, sliderWidth, 20,
-                OutlineConfig.WIDTH.get());
-        this.addRenderableWidget(widthSlider);
-
-        // RGB Checkbox
-        this.addRenderableWidget(Checkbox.builder(Component.literal("Enable RGB"), this.font)
-                .pos(centerX - 40, startY + spacing * 5)
-                .selected(rgbEnabled)
-                .onValueChange((checkbox, selected) -> rgbEnabled = selected)
+        Component outlineRgbText = Component.literal("Rainbow Outline");
+        int outlineRgbWidth = this.font.width(outlineRgbText) + 24;
+        this.addRenderableWidget(Checkbox.builder(outlineRgbText, this.font)
+                .pos(leftColumnCenter - outlineRgbWidth / 2, outlineY)
+                .selected(outlineRgbEnabled)
+                .onValueChange((checkbox, selected) -> outlineRgbEnabled = selected)
                 .build());
 
-        // RGB Speed slider
-        this.rgbSpeedSlider = new RGBSpeedSlider(centerX - sliderWidth/2, startY + spacing * 6, sliderWidth, 20,
-                OutlineConfig.RGB_SPEED.get());
-        this.addRenderableWidget(rgbSpeedSlider);
+        outlineY += spacing;
+
+        this.outlineRgbSpeedSlider = new RGBSpeedSlider(
+                leftColumnCenter - sliderWidth / 2,
+                outlineY,
+                sliderWidth,
+                20,
+                config.getOutlineRgbSpeed()
+        );
+        this.addRenderableWidget(outlineRgbSpeedSlider);
+
+        outlineY += spacing;
+
+        this.outlineRedSlider = new ColorSlider(
+                leftColumnCenter - sliderWidth / 2,
+                outlineY,
+                sliderWidth,
+                20,
+                "Red",
+                config.getOutlineRed()
+        );
+        this.addRenderableWidget(outlineRedSlider);
+
+        outlineY += spacing;
+
+        this.outlineGreenSlider = new ColorSlider(
+                leftColumnCenter - sliderWidth / 2,
+                outlineY,
+                sliderWidth,
+                20,
+                "Green",
+                config.getOutlineGreen()
+        );
+        this.addRenderableWidget(outlineGreenSlider);
+
+        outlineY += spacing;
+
+        this.outlineBlueSlider = new ColorSlider(
+                leftColumnCenter - sliderWidth / 2,
+                outlineY,
+                sliderWidth,
+                20,
+                "Blue",
+                config.getOutlineBlue()
+        );
+        this.addRenderableWidget(outlineBlueSlider);
+
+        outlineY += spacing;
+
+        this.outlineOpacitySlider = new OpacitySlider(
+                leftColumnCenter - sliderWidth / 2,
+                outlineY,
+                sliderWidth,
+                20,
+                config.getOutlineOpacity()
+        );
+        this.addRenderableWidget(outlineOpacitySlider);
+
+        outlineY += spacing;
+
+        this.outlineWidthSlider = new WidthSlider(
+                leftColumnCenter - sliderWidth / 2,
+                outlineY,
+                sliderWidth,
+                20,
+                config.getOutlineWidth()
+        );
+        this.addRenderableWidget(outlineWidthSlider);
+
+        // --- FILL SECTION (RIGHT) ---
+        int fillY = 60;
+
+        Component fillEnabledText = Component.literal("Enable Fill");
+        int fillEnabledWidth = this.font.width(fillEnabledText) + 24;
+        this.fillEnabledCheckbox = this.addRenderableWidget(Checkbox.builder(fillEnabledText, this.font)
+                .pos(rightColumnCenter - fillEnabledWidth / 2, fillY)
+                .selected(config.isFillEnabled())
+                .build());
+
+        fillY += spacing;
+
+        Component fillRgbText = Component.literal("Rainbow Fill");
+        int fillRgbWidth = this.font.width(fillRgbText) + 24;
+        this.addRenderableWidget(Checkbox.builder(fillRgbText, this.font)
+                .pos(rightColumnCenter - fillRgbWidth / 2, fillY)
+                .selected(fillRgbEnabled)
+                .onValueChange((checkbox, selected) -> fillRgbEnabled = selected)
+                .build());
+
+        fillY += spacing;
+
+        this.fillRgbSpeedSlider = new RGBSpeedSlider(
+                rightColumnCenter - sliderWidth / 2,
+                fillY,
+                sliderWidth,
+                20,
+                config.getFillRgbSpeed()
+        );
+        this.addRenderableWidget(fillRgbSpeedSlider);
+
+        fillY += spacing;
+
+        this.fillRedSlider = new ColorSlider(
+                rightColumnCenter - sliderWidth / 2,
+                fillY,
+                sliderWidth,
+                20,
+                "Red",
+                config.getFillRed()
+        );
+        this.addRenderableWidget(fillRedSlider);
+
+        fillY += spacing;
+
+        this.fillGreenSlider = new ColorSlider(
+                rightColumnCenter - sliderWidth / 2,
+                fillY,
+                sliderWidth,
+                20,
+                "Green",
+                config.getFillGreen()
+        );
+        this.addRenderableWidget(fillGreenSlider);
+
+        fillY += spacing;
+
+        this.fillBlueSlider = new ColorSlider(
+                rightColumnCenter - sliderWidth / 2,
+                fillY,
+                sliderWidth,
+                20,
+                "Blue",
+                config.getFillBlue()
+        );
+        this.addRenderableWidget(fillBlueSlider);
+
+        fillY += spacing;
+
+        this.fillOpacitySlider = new OpacitySlider(
+                rightColumnCenter - sliderWidth / 2,
+                fillY,
+                sliderWidth,
+                20,
+                config.getFillOpacity()
+        );
+        this.addRenderableWidget(fillOpacitySlider);
 
         // Done button
         this.addRenderableWidget(Button.builder(Component.literal("Done"), b -> saveAndClose())
-                .bounds(centerX - 100, this.height - 40, 200, 20).build());
+                .bounds(centerX - 100, this.height - 30, 200, 20)
+                .build());
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        this.renderTransparentBackground(graphics);
-
         super.render(graphics, mouseX, mouseY, partialTick);
 
         int centerX = this.width / 2;
+        int columnOffset = 120;
+        int leftColumnCenter = centerX - columnOffset;
+        int rightColumnCenter = centerX + columnOffset;
+
         graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFFFF);
+
+        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 42, 0xFF00FFFF);
+        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 42, 0xFF00FFFF);
     }
 
     private void saveAndClose() {
-        OutlineConfig.RED.set(redSlider.getIntValue());
-        OutlineConfig.GREEN.set(greenSlider.getIntValue());
-        OutlineConfig.BLUE.set(blueSlider.getIntValue());
-        OutlineConfig.OPACITY.set(opacitySlider.getValue());
-        OutlineConfig.WIDTH.set(widthSlider.getValue());
-        OutlineConfig.RGB_ENABLED.set(rgbEnabled);
-        OutlineConfig.RGB_SPEED.set(rgbSpeedSlider.getValue());
-        OutlineConfig.SPEC.save();
+        // Save outline settings
+        config.setOutlineRed(outlineRedSlider.getIntValue());
+        config.setOutlineGreen(outlineGreenSlider.getIntValue());
+        config.setOutlineBlue(outlineBlueSlider.getIntValue());
+        config.setOutlineOpacity(outlineOpacitySlider.getValue());
+        config.setOutlineWidth(outlineWidthSlider.getValue());
+        config.setOutlineRgbEnabled(outlineRgbEnabled);
+        config.setOutlineRgbSpeed(outlineRgbSpeedSlider.getValue());
+
+        // Save fill settings
+        config.setFillEnabled(fillEnabledCheckbox.selected());
+        config.setFillRed(fillRedSlider.getIntValue());
+        config.setFillGreen(fillGreenSlider.getIntValue());
+        config.setFillBlue(fillBlueSlider.getIntValue());
+        config.setFillOpacity(fillOpacitySlider.getValue());
+        config.setFillRgbEnabled(fillRgbEnabled);
+        config.setFillRgbSpeed(fillRgbSpeedSlider.getValue());
+
+        config.save();
 
         this.minecraft.setScreen(lastScreen);
     }
@@ -114,7 +258,6 @@ public class ConfigScreen extends Screen {
         this.minecraft.setScreen(lastScreen);
     }
 
-    // Custom slider classes
     private static class ColorSlider extends AbstractSliderButton {
         private final String label;
 
@@ -130,7 +273,6 @@ public class ConfigScreen extends Screen {
 
         @Override
         protected void applyValue() {
-            // Value is already stored in this.value
         }
 
         public int getIntValue() {
@@ -150,7 +292,6 @@ public class ConfigScreen extends Screen {
 
         @Override
         protected void applyValue() {
-            // Value is already stored in this.value
         }
 
         public double getValue() {
@@ -171,7 +312,6 @@ public class ConfigScreen extends Screen {
 
         @Override
         protected void applyValue() {
-            // Value is already stored in this.value
         }
 
         public double getValue() {
@@ -192,7 +332,6 @@ public class ConfigScreen extends Screen {
 
         @Override
         protected void applyValue() {
-            // Value is already stored in this.value
         }
 
         public double getValue() {

@@ -10,6 +10,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class BlockOutlineCustomizerNeoForge {
         modContainer.registerConfig(ModConfig.Type.CLIENT, OutlineConfig.SPEC);
         modEventBus.addListener(this::registerKeyMappings);
         modEventBus.addListener(this::clientSetup);
-
+        NeoForge.EVENT_BUS.addListener(OutlineRenderer::onRenderLevelStage);
         LOGGER.info("Block Outline Customizer initialized!");
     }
 
