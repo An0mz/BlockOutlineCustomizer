@@ -3,7 +3,7 @@ plugins {
 }
 
 base {
-    archivesName = mod_id
+    archivesName = "boc-${minecraft_version}-forge"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
