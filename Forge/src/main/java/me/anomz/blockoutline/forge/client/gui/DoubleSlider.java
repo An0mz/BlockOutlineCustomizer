@@ -1,4 +1,4 @@
-package me.anomz.blockoutline.neoforge.client.gui;
+package me.anomz.blockoutline.forge.client.gui;
 
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;

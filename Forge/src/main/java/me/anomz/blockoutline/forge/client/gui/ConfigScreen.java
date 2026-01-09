@@ -1,7 +1,6 @@
-package me.anomz.blockoutline.neoforge.client.gui;
+package me.anomz.blockoutline.forge.client.gui;
 
 import me.anomz.blockoutline.platform.ConfigHelper;
-import me.anomz.blockoutline.platform.Services;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
@@ -13,30 +12,28 @@ public class ConfigScreen extends Screen {
     private final Screen lastScreen;
     private final ConfigHelper config;
 
-    // Outline sliders
+    // Outline controls
     private ColorSlider outlineRedSlider;
     private ColorSlider outlineGreenSlider;
     private ColorSlider outlineBlueSlider;
     private OpacitySlider outlineOpacitySlider;
     private WidthSlider outlineWidthSlider;
     private RGBSpeedSlider outlineRgbSpeedSlider;
-    private boolean outlineRgbEnabled;
+    private Checkbox outlineRgbCheckbox;
 
-    // Fill sliders
+    // Fill controls
     private Checkbox fillEnabledCheckbox;
     private ColorSlider fillRedSlider;
     private ColorSlider fillGreenSlider;
     private ColorSlider fillBlueSlider;
     private OpacitySlider fillOpacitySlider;
     private RGBSpeedSlider fillRgbSpeedSlider;
-    private boolean fillRgbEnabled;
+    private Checkbox fillRgbCheckbox;
 
-    public ConfigScreen(Screen lastScreen) {
+    public ConfigScreen(Screen lastScreen, ConfigHelper config) {
         super(Component.literal("Block Outline Customizer"));
         this.lastScreen = lastScreen;
-        this.config = Services.getConfigHelper();
-        this.outlineRgbEnabled = config.isOutlineRgbEnabled();
-        this.fillRgbEnabled = config.isFillRgbEnabled();
+        this.config = config;
     }
 
     @Override
@@ -55,11 +52,19 @@ public class ConfigScreen extends Screen {
 
         Component outlineRgbText = Component.literal("Rainbow Outline");
         int outlineRgbWidth = this.font.width(outlineRgbText) + 24;
-        this.addRenderableWidget(Checkbox.builder(outlineRgbText, this.font)
-                .pos(leftColumnCenter - outlineRgbWidth / 2, outlineY)
-                .selected(outlineRgbEnabled)
-                .onValueChange((checkbox, selected) -> outlineRgbEnabled = selected)
-                .build());
+
+        // OLD 1.20.1 API: Direct constructor, no builder
+        this.outlineRgbCheckbox = this.addRenderableWidget(
+                new Checkbox(
+                        leftColumnCenter - outlineRgbWidth / 2,
+                        outlineY,
+                        outlineRgbWidth,
+                        20,
+                        outlineRgbText,
+                        config.isOutlineRgbEnabled(),
+                        true
+                )
+        );
 
         outlineY += spacing;
 
@@ -135,20 +140,35 @@ public class ConfigScreen extends Screen {
 
         Component fillEnabledText = Component.literal("Enable Fill");
         int fillEnabledWidth = this.font.width(fillEnabledText) + 24;
-        this.fillEnabledCheckbox = this.addRenderableWidget(Checkbox.builder(fillEnabledText, this.font)
-                .pos(rightColumnCenter - fillEnabledWidth / 2, fillY)
-                .selected(config.isFillEnabled())
-                .build());
+
+        this.fillEnabledCheckbox = this.addRenderableWidget(
+                new Checkbox(
+                        rightColumnCenter - fillEnabledWidth / 2,
+                        fillY,
+                        fillEnabledWidth,
+                        20,
+                        fillEnabledText,
+                        config.isFillEnabled(),
+                        true
+                )
+        );
 
         fillY += spacing;
 
         Component fillRgbText = Component.literal("Rainbow Fill");
         int fillRgbWidth = this.font.width(fillRgbText) + 24;
-        this.addRenderableWidget(Checkbox.builder(fillRgbText, this.font)
-                .pos(rightColumnCenter - fillRgbWidth / 2, fillY)
-                .selected(fillRgbEnabled)
-                .onValueChange((checkbox, selected) -> fillRgbEnabled = selected)
-                .build());
+
+        this.fillRgbCheckbox = this.addRenderableWidget(
+                new Checkbox(
+                        rightColumnCenter - fillRgbWidth / 2,
+                        fillY,
+                        fillRgbWidth,
+                        20,
+                        fillRgbText,
+                        config.isFillRgbEnabled(),
+                        true
+                )
+        );
 
         fillY += spacing;
 
@@ -208,7 +228,7 @@ public class ConfigScreen extends Screen {
         );
         this.addRenderableWidget(fillOpacitySlider);
 
-        // Done button
+        // Done button - OLD 1.20.1 API
         this.addRenderableWidget(Button.builder(Component.literal("Done"), b -> saveAndClose())
                 .bounds(centerX - 100, this.height - 30, 200, 20)
                 .build());
@@ -216,7 +236,7 @@ public class ConfigScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        graphics.fill(0, 0, this.width, this.height, 0xE0101010);
+        this.renderBackground(graphics);
 
         super.render(graphics, mouseX, mouseY, partialTick);
 
@@ -225,10 +245,9 @@ public class ConfigScreen extends Screen {
         int leftColumnCenter = centerX - columnOffset;
         int rightColumnCenter = centerX + columnOffset;
 
-        graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFF);
-
-        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 42, 0x00FFFF);
-        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 42, 0x00FFFF);
+        graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFFFF);
+        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 42, 0xFF00FFFF);
+        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 42, 0xFF00FFFF);
     }
 
     private void saveAndClose() {
@@ -238,7 +257,7 @@ public class ConfigScreen extends Screen {
         config.setOutlineBlue(outlineBlueSlider.getIntValue());
         config.setOutlineOpacity(outlineOpacitySlider.getValue());
         config.setOutlineWidth(outlineWidthSlider.getValue());
-        config.setOutlineRgbEnabled(outlineRgbEnabled);
+        config.setOutlineRgbEnabled(outlineRgbCheckbox.selected());
         config.setOutlineRgbSpeed(outlineRgbSpeedSlider.getValue());
 
         // Save fill settings
@@ -247,7 +266,7 @@ public class ConfigScreen extends Screen {
         config.setFillGreen(fillGreenSlider.getIntValue());
         config.setFillBlue(fillBlueSlider.getIntValue());
         config.setFillOpacity(fillOpacitySlider.getValue());
-        config.setFillRgbEnabled(fillRgbEnabled);
+        config.setFillRgbEnabled(fillRgbCheckbox.selected());
         config.setFillRgbSpeed(fillRgbSpeedSlider.getValue());
 
         config.save();

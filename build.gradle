@@ -9,7 +9,7 @@ subprojects {
     version = mod_version
 
     java {
-        toolchain.languageVersion = JavaLanguageVersion.of(21)
+        toolchain.languageVersion = JavaLanguageVersion.of(17)
         withSourcesJar()
     }
 
@@ -22,6 +22,6 @@ subprojects {
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
-        options.release = 21
+        options.release = 17
     }
 }
