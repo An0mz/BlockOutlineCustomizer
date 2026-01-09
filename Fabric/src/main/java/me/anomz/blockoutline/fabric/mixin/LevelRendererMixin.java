@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.BlockOutlineRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -89,7 +89,7 @@ public class LevelRendererMixin {
         float lineWidth = (float)config.getOutlineWidth();
 
         // Get our own vertex consumer for lines
-        VertexConsumer lineConsumer = bufferSource.getBuffer(RenderType.lines());
+        VertexConsumer lineConsumer = bufferSource.getBuffer(RenderTypes.lines());
 
         int passes = Math.max(1, (int)lineWidth);
         float offsetIncrement = 0.001f;
@@ -111,12 +111,12 @@ public class LevelRendererMixin {
                 lineConsumer.addVertex(matrix, (float)minX + offset, (float)minY + offset, (float)minZ + offset)
                         .setColor(red, green, blue, alpha)
                         .setNormal(normalX, normalY, normalZ)
-                        .setLineWidth(lineWidth);;
+                        .setLineWidth(lineWidth);
 
                 lineConsumer.addVertex(matrix, (float)maxX + offset, (float)maxY + offset, (float)maxZ + offset)
                         .setColor(red, green, blue, alpha)
                         .setNormal(normalX, normalY, normalZ)
-                        .setLineWidth(lineWidth);;
+                        .setLineWidth(lineWidth);
             });
         }
     }
@@ -142,7 +142,7 @@ public class LevelRendererMixin {
         alpha = (float)config.getFillOpacity();
         float offset = 0.001f;
 
-        VertexConsumer fillConsumer = bufferSource.getBuffer(RenderType.debugQuads());
+        VertexConsumer fillConsumer = bufferSource.getBuffer(RenderTypes.debugQuads());
 
         shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
             float sMinX = (float)minX - offset;
@@ -152,37 +152,37 @@ public class LevelRendererMixin {
             float sMaxY = (float)maxY + offset;
             float sMaxZ = (float)maxZ + offset;
 
-            // Bottom face
+            // Bottom face (Y-)
             fillConsumer.addVertex(matrix, sMinX, sMinY, sMinZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMinY, sMinZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMinY, sMaxZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMinX, sMinY, sMaxZ).setColor(red, green, blue, alpha);
 
-            // Top face
+            // Top face (Y+)
             fillConsumer.addVertex(matrix, sMinX, sMaxY, sMinZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMinX, sMaxY, sMaxZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMaxY, sMaxZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMaxY, sMinZ).setColor(red, green, blue, alpha);
 
-            // North face
+            // North face (Z-)
             fillConsumer.addVertex(matrix, sMinX, sMinY, sMinZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMinX, sMaxY, sMinZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMaxY, sMinZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMinY, sMinZ).setColor(red, green, blue, alpha);
 
-            // South face
+            // South face (Z+)
             fillConsumer.addVertex(matrix, sMinX, sMinY, sMaxZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMinY, sMaxZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMaxY, sMaxZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMinX, sMaxY, sMaxZ).setColor(red, green, blue, alpha);
 
-            // West face
+            // West face (X-)
             fillConsumer.addVertex(matrix, sMinX, sMinY, sMinZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMinX, sMinY, sMaxZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMinX, sMaxY, sMaxZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMinX, sMaxY, sMinZ).setColor(red, green, blue, alpha);
 
-            // East face
+            // East face (X+)
             fillConsumer.addVertex(matrix, sMaxX, sMinY, sMinZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMaxY, sMinZ).setColor(red, green, blue, alpha);
             fillConsumer.addVertex(matrix, sMaxX, sMaxY, sMaxZ).setColor(red, green, blue, alpha);

@@ -1,13 +1,12 @@
 package me.anomz.blockoutline.neoforge.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import me.anomz.blockoutline.platform.ConfigHelper;
 import me.anomz.blockoutline.platform.Services;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,7 +20,6 @@ import java.awt.*;
 
 public class OutlineRenderer {
 
-    // Use the specific subclass!
     public static void onRenderLevelStage(RenderLevelStageEvent.AfterTranslucentBlocks event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.hitResult == null) {
@@ -48,9 +46,9 @@ public class OutlineRenderer {
         PoseStack poseStack = event.getPoseStack();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
-        double camX = camera.getPosition().x;
-        double camY = camera.getPosition().y;
-        double camZ = camera.getPosition().z;
+        double camX = camera.position().x;
+        double camY = camera.position().y;
+        double camZ = camera.position().z;
 
         poseStack.pushPose();
         poseStack.translate(
@@ -93,9 +91,7 @@ public class OutlineRenderer {
         alpha = (float)config.getOutlineOpacity();
         float lineWidth = (float)config.getOutlineWidth();
 
-        RenderSystem.lineWidth(lineWidth);
-
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.lines());
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderTypes.lines());
 
         int passes = Math.max(1, (int)lineWidth);
         float offsetIncrement = 0.001f;
@@ -115,15 +111,17 @@ public class OutlineRenderer {
 
                 vertexConsumer.addVertex(matrix, (float)minX + offset, (float)minY + offset, (float)minZ + offset)
                         .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
+                        .setNormal(normalX, normalY, normalZ)
+                        .setLineWidth(lineWidth);
 
                 vertexConsumer.addVertex(matrix, (float)maxX + offset, (float)maxY + offset, (float)maxZ + offset)
                         .setColor(red, green, blue, alpha)
-                        .setNormal(normalX, normalY, normalZ);
+                        .setNormal(normalX, normalY, normalZ)
+                        .setLineWidth(lineWidth);
             });
         }
 
-        bufferSource.endBatch(RenderType.lines());
+        bufferSource.endBatch(RenderTypes.lines());
     }
 
     private static void renderFill(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
@@ -147,7 +145,7 @@ public class OutlineRenderer {
         alpha = (float)config.getFillOpacity();
         float offset = 0.001f;
 
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.debugQuads());
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderTypes.debugQuads());
 
         shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
             float sMinX = (float)minX - offset;
@@ -194,6 +192,6 @@ public class OutlineRenderer {
             vertexConsumer.addVertex(matrix, sMaxX, sMinY, sMaxZ).setColor(red, green, blue, alpha);
         });
 
-        bufferSource.endBatch(RenderType.debugQuads());
+        bufferSource.endBatch(RenderTypes.debugQuads());
     }
 }
