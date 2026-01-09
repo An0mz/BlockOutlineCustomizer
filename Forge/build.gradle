@@ -33,8 +33,6 @@ processResources {
     }
 }
 
-
-// CRITICAL: This tells Gradle where Common sources are
 sourceSets.main {
     java {
         srcDir project(':Common').file('src/main/java')
@@ -51,8 +49,4 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-}
-
-jar {
-    from(project(':Common').sourceSets.main.output)
 }
