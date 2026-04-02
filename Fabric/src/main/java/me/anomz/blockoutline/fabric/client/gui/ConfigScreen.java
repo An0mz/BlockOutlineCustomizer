@@ -2,7 +2,7 @@ package me.anomz.blockoutline.fabric.client.gui;
 
 import me.anomz.blockoutline.platform.ConfigHelper;
 import me.anomz.blockoutline.platform.Services;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
@@ -215,22 +215,20 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
         int centerX = this.width / 2;
         int columnOffset = 120;
         int leftColumnCenter = centerX - columnOffset;
         int rightColumnCenter = centerX + columnOffset;
 
-        graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFFFF);
-        
-        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 42, 0xFF00FFFF);
-        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 42, 0xFF00FFFF);
+        graphics.centeredText(this.font, this.title, centerX, 15, 0xFFFFFFFF);
+        graphics.centeredText(this.font, Component.literal("Outline Settings"), leftColumnCenter, 42, 0xFF00FFFF);
+        graphics.centeredText(this.font, Component.literal("Fill Settings"), rightColumnCenter, 42, 0xFF00FFFF);
     }
 
     private void saveAndClose() {
-        // Save outline settings
         config.setOutlineRed(outlineRedSlider.getIntValue());
         config.setOutlineGreen(outlineGreenSlider.getIntValue());
         config.setOutlineBlue(outlineBlueSlider.getIntValue());
@@ -239,7 +237,6 @@ public class ConfigScreen extends Screen {
         config.setOutlineRgbEnabled(outlineRgbEnabled);
         config.setOutlineRgbSpeed(outlineRgbSpeedSlider.getValue());
 
-        // Save fill settings
         config.setFillEnabled(fillEnabledCheckbox.selected());
         config.setFillRed(fillRedSlider.getIntValue());
         config.setFillGreen(fillGreenSlider.getIntValue());

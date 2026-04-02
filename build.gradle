@@ -1,16 +1,15 @@
-plugins {
-    id 'java'
-}
-
 subprojects {
     apply plugin: 'java'
 
     group = mod_group_id
     version = mod_version
 
-    java {
-        toolchain.languageVersion = JavaLanguageVersion.of(25)
-        withSourcesJar()
+    // Only apply these to non-Fabric subprojects
+    if (project.name != 'Fabric') {
+        java {
+            toolchain.languageVersion = JavaLanguageVersion.of(25)
+            withSourcesJar()
+        }
     }
 
     repositories {
