@@ -5,7 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "blockoutlinecustomizer.refmap.json",
   "client": [
-    "LevelRendererMixin"
+
   ],
   "injectors": {
     "defaultRequire": 1

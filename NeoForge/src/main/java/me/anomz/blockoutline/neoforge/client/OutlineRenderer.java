@@ -13,23 +13,24 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
 import java.awt.*;
 
+@EventBusSubscriber(modid = "blockoutlinecustomizer", value = Dist.CLIENT)
 public class OutlineRenderer {
 
+    @SubscribeEvent
     public static void onRenderLevelStage(RenderLevelStageEvent.AfterTranslucentBlocks event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.hitResult == null) {
-            return;
-        }
+        if (mc.level == null || mc.hitResult == null) return;
 
         HitResult hitResult = mc.hitResult;
-        if (hitResult.getType() != HitResult.Type.BLOCK) {
-            return;
-        }
+        if (hitResult.getType() != HitResult.Type.BLOCK) return;
 
         BlockHitResult blockHitResult = (BlockHitResult) hitResult;
         BlockPos blockPos = blockHitResult.getBlockPos();
@@ -37,20 +38,18 @@ public class OutlineRenderer {
         BlockState blockState = level.getBlockState(blockPos);
         VoxelShape shape = blockState.getShape(level, blockPos);
 
-        if (shape.isEmpty()) {
-            return;
-        }
+        if (shape.isEmpty()) return;
 
         ConfigHelper config = Services.getConfigHelper();
         Camera camera = mc.gameRenderer.getMainCamera();
-        PoseStack poseStack = event.getPoseStack();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
         double camX = camera.position().x;
         double camY = camera.position().y;
         double camZ = camera.position().z;
 
-        poseStack.pushPose();
+        // Build our own PoseStack instead of getting it from event
+        PoseStack poseStack = new PoseStack();
         poseStack.translate(
                 blockPos.getX() - camX,
                 blockPos.getY() - camY,
@@ -59,15 +58,10 @@ public class OutlineRenderer {
 
         Matrix4f matrix = poseStack.last().pose();
 
-        // Render fill first (so outline renders on top)
         if (config.isFillEnabled()) {
             renderFill(bufferSource, shape, matrix, config);
         }
-
-        // Render outline
         renderOutline(bufferSource, shape, matrix, config);
-
-        poseStack.popPose();
     }
 
     private static void renderOutline(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
