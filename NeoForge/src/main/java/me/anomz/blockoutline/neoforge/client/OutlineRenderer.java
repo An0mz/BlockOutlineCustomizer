@@ -41,6 +41,8 @@ public class OutlineRenderer {
         if (shape.isEmpty()) return;
 
         ConfigHelper config = Services.getConfigHelper();
+        if (!config.isCustomOutlineEnabled()) return; // Use vanilla outline
+
         Camera camera = mc.gameRenderer.getMainCamera();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
@@ -121,8 +123,10 @@ public class OutlineRenderer {
     private static void renderFill(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
         float red, green, blue, alpha;
 
-        if (config.isFillRgbEnabled()) {
-            float speed = (float)config.getFillRgbSpeed();
+        boolean useRgb = config.isFillRgbEnabled() || (config.isSyncRgb() && config.isOutlineRgbEnabled());
+        if (useRgb) {
+            float speed = config.isSyncRgb() && config.isOutlineRgbEnabled()
+                    ? (float)config.getOutlineRgbSpeed() : (float)config.getFillRgbSpeed();
             float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
             float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
             Color color = Color.getHSBColor(hue, 1.0f, 1.0f);

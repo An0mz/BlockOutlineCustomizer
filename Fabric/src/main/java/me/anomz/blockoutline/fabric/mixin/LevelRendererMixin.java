@@ -33,6 +33,9 @@ public class LevelRendererMixin {
             LevelRenderState levelRenderState,
             CallbackInfo ci
     ) {
+        ConfigHelper config = Services.getConfigHelper();
+        if (!config.isCustomOutlineEnabled()) return; // Use vanilla outline
+
         ci.cancel();
 
         Minecraft mc = Minecraft.getInstance();
@@ -45,7 +48,6 @@ public class LevelRendererMixin {
         VoxelShape shape = blockState.getShape(mc.level, blockPos);
         if (shape.isEmpty()) return;
 
-        ConfigHelper config = Services.getConfigHelper();
         Camera camera = mc.gameRenderer.getMainCamera();
 
         double camX = camera.position().x;
@@ -126,8 +128,10 @@ public class LevelRendererMixin {
     private void renderFill(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, ConfigHelper config) {
         float red, green, blue, alpha;
 
-        if (config.isFillRgbEnabled()) {
-            float speed = (float) config.getFillRgbSpeed();
+        boolean useRgb = config.isFillRgbEnabled() || (config.isSyncRgb() && config.isOutlineRgbEnabled());
+        if (useRgb) {
+            float speed = config.isSyncRgb() && config.isOutlineRgbEnabled()
+                    ? (float) config.getOutlineRgbSpeed() : (float) config.getFillRgbSpeed();
             float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
             float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
             Color color = Color.getHSBColor(hue, 1.0f, 1.0f);
