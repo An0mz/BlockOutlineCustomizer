@@ -12,6 +12,10 @@ public class ConfigScreen extends Screen {
     private final Screen lastScreen;
     private final ConfigHelper config;
 
+    // Master toggle
+    private Checkbox customOutlineCheckbox;
+    private Checkbox syncRgbCheckbox;
+
     // Outline controls
     private ColorSlider outlineRedSlider;
     private ColorSlider outlineGreenSlider;
@@ -47,8 +51,39 @@ public class ConfigScreen extends Screen {
         int sliderWidth = 150;
         int spacing = 26;
 
+        // --- TOP: Enable Custom Outline + Sync RGB ---
+        int topY = 32;
+
+        Component enabledText = Component.literal("Enable Custom Outline");
+        int enabledWidth = this.font.width(enabledText) + 24;
+        this.customOutlineCheckbox = this.addRenderableWidget(
+                new Checkbox(
+                        centerX - enabledWidth - 5,
+                        topY,
+                        enabledWidth,
+                        20,
+                        enabledText,
+                        config.isCustomOutlineEnabled(),
+                        true
+                )
+        );
+
+        Component syncRgbText = Component.literal("Sync RGB");
+        int syncRgbWidth = this.font.width(syncRgbText) + 24;
+        this.syncRgbCheckbox = this.addRenderableWidget(
+                new Checkbox(
+                        centerX + 5,
+                        topY,
+                        syncRgbWidth,
+                        20,
+                        syncRgbText,
+                        config.isSyncRgb(),
+                        true
+                )
+        );
+
         // --- OUTLINE SECTION (LEFT) ---
-        int outlineY = 60;
+        int outlineY = 70;
 
         Component outlineRgbText = Component.literal("Rainbow Outline");
         int outlineRgbWidth = this.font.width(outlineRgbText) + 24;
@@ -136,7 +171,7 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(outlineWidthSlider);
 
         // --- FILL SECTION (RIGHT) ---
-        int fillY = 60;
+        int fillY = 70;
 
         Component fillEnabledText = Component.literal("Enable Fill");
         int fillEnabledWidth = this.font.width(fillEnabledText) + 24;
@@ -228,6 +263,11 @@ public class ConfigScreen extends Screen {
         );
         this.addRenderableWidget(fillOpacitySlider);
 
+        // Reset to Defaults button
+        this.addRenderableWidget(Button.builder(Component.literal("Reset to Defaults"), b -> resetToDefaults())
+                .bounds(centerX - 100, this.height - 56, 200, 20)
+                .build());
+
         // Done button - OLD 1.20.1 API
         this.addRenderableWidget(Button.builder(Component.literal("Done"), b -> saveAndClose())
                 .bounds(centerX - 100, this.height - 30, 200, 20)
@@ -246,11 +286,13 @@ public class ConfigScreen extends Screen {
         int rightColumnCenter = centerX + columnOffset;
 
         graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFFFF);
-        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 42, 0xFF00FFFF);
-        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 42, 0xFF00FFFF);
+        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 56, 0xFF00FFFF);
+        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 56, 0xFF00FFFF);
     }
 
     private void saveAndClose() {
+        config.setCustomOutlineEnabled(customOutlineCheckbox.selected());
+        config.setSyncRgb(syncRgbCheckbox.selected());
         // Save outline settings
         config.setOutlineRed(outlineRedSlider.getIntValue());
         config.setOutlineGreen(outlineGreenSlider.getIntValue());
@@ -277,6 +319,11 @@ public class ConfigScreen extends Screen {
     @Override
     public void onClose() {
         this.minecraft.setScreen(lastScreen);
+    }
+
+    private void resetToDefaults() {
+        config.resetToDefaults();
+        this.rebuildWidgets();
     }
 
     private static class ColorSlider extends AbstractSliderButton {
@@ -360,3 +407,4 @@ public class ConfigScreen extends Screen {
         }
     }
 }
+

@@ -1,5 +1,6 @@
 package me.anomz.blockoutline.forge.client;
 
+import me.anomz.blockoutline.platform.Services;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,6 +11,8 @@ public class OutlineDisabler {
 
     @SubscribeEvent
     public static void onBlockHighlight(RenderHighlightEvent.Block event) {
-        event.setCanceled(true);
+        if (Services.getConfigHelper().isCustomOutlineEnabled()) {
+            event.setCanceled(true);
+        }
     }
 }

@@ -6,6 +6,10 @@ public class OutlineConfig {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec SPEC;
 
+    // Master toggle
+    public static final ForgeConfigSpec.BooleanValue CUSTOM_OUTLINE_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue SYNC_RGB;
+
     // Outline settings
     public static final ForgeConfigSpec.IntValue OUTLINE_RED;
     public static final ForgeConfigSpec.IntValue OUTLINE_GREEN;
@@ -25,6 +29,18 @@ public class OutlineConfig {
     public static final ForgeConfigSpec.DoubleValue FILL_RGB_SPEED;
 
     static {
+        BUILDER.push("general");
+
+        CUSTOM_OUTLINE_ENABLED = BUILDER
+                .comment("Enable custom outline (false = vanilla outline)")
+                .define("customOutlineEnabled", true);
+
+        SYNC_RGB = BUILDER
+                .comment("Sync outline and fill RGB rainbow")
+                .define("syncRgb", false);
+
+        BUILDER.pop();
+
         BUILDER.comment("Block Outline Customizer Configuration").push("outline");
 
         // Outline settings
