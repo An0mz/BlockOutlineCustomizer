@@ -22,12 +22,18 @@ import java.awt.Color;
 public class OutlineRenderer {
 
     public static void onRenderBlockHighlight(RenderHighlightEvent.Block event) {
-        event.setCanceled(true);
-
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) {
             return;
         }
+
+        ConfigHelper config = Services.getConfigHelper();
+
+        if (!config.isCustomOutlineEnabled()) {
+            return; // Let vanilla render
+        }
+
+        event.setCanceled(true);
 
         BlockPos blockPos = event.getTarget().getBlockPos();
         Level level = mc.level;
@@ -41,8 +47,6 @@ public class OutlineRenderer {
         Camera camera = event.getCamera();
         PoseStack poseStack = event.getPoseStack();
         MultiBufferSource multiBufferSource = event.getMultiBufferSource();
-
-        ConfigHelper config = Services.getConfigHelper();
 
         double camX = camera.getPosition().x;
         double camY = camera.getPosition().y;
@@ -124,8 +128,10 @@ public class OutlineRenderer {
 
         float red, green, blue, alpha;
 
-        if (config.isFillRgbEnabled()) {
-            float speed = (float)config.getFillRgbSpeed();
+        boolean useRgb = config.isFillRgbEnabled() || (config.isSyncRgb() && config.isOutlineRgbEnabled());
+        if (useRgb) {
+            float speed = config.isSyncRgb() && config.isOutlineRgbEnabled()
+                    ? (float)config.getOutlineRgbSpeed() : (float)config.getFillRgbSpeed();
             float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
             float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
             Color color = Color.getHSBColor(hue, 1.0f, 1.0f);

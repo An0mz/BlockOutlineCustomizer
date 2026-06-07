@@ -35,6 +35,10 @@ public class OutlineRenderer {
 
         ConfigHelper config = Services.getConfigHelper();
 
+        if (!config.isCustomOutlineEnabled()) {
+            return true; // Let vanilla render
+        }
+
         double camX = camera.getPosition().x;
         double camY = camera.getPosition().y;
         double camZ = camera.getPosition().z;
@@ -117,8 +121,10 @@ public class OutlineRenderer {
 
         float red, green, blue, alpha;
 
-        if (config.isFillRgbEnabled()) {
-            float speed = (float)config.getFillRgbSpeed();
+        boolean useRgb = config.isFillRgbEnabled() || (config.isSyncRgb() && config.isOutlineRgbEnabled());
+        if (useRgb) {
+            float speed = config.isSyncRgb() && config.isOutlineRgbEnabled()
+                    ? (float)config.getOutlineRgbSpeed() : (float)config.getFillRgbSpeed();
             float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
             float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
             Color color = Color.getHSBColor(hue, 1.0f, 1.0f);

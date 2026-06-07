@@ -12,6 +12,10 @@ public class OutlineConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("blockoutlinecustomizer.json");
 
+    // Master toggle
+    public boolean customOutlineEnabled = true;
+    public boolean syncRgb = false;
+
     // Outline settings
     public int outlineRed = 0;
     public int outlineGreen = 255;
