@@ -1,6 +1,14 @@
 package me.anomz.blockoutline.platform;
 
 public interface ConfigHelper {
+    // Master toggle
+    boolean isCustomOutlineEnabled();
+    void setCustomOutlineEnabled(boolean enabled);
+
+    // Sync RGB
+    boolean isSyncRgb();
+    void setSyncRgb(boolean sync);
+
     // Outline settings
     int getOutlineRed();
     int getOutlineGreen();
@@ -36,4 +44,6 @@ public interface ConfigHelper {
     void setFillRgbSpeed(double speed);
 
     void save();
+
+    void resetToDefaults();
 }
