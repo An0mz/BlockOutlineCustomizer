@@ -1,8 +1,6 @@
 package me.anomz.blockoutline.neoforge.client;
 
-import me.anomz.blockoutline.neoforge.client.KeyBindings;
 import me.anomz.blockoutline.neoforge.client.gui.ConfigScreen;
-import me.anomz.blockoutline.platform.Services;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -22,9 +20,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void cancelVanillaOutline(ExtractBlockOutlineRenderStateEvent event) {
-        if (Services.getConfigHelper().isCustomOutlineEnabled()) {
-            event.setCanceled(true);
-        }
+    public static void onExtractBlockOutline(ExtractBlockOutlineRenderStateEvent event) {
+        event.addCustomRenderer(new OutlineRenderer());
     }
 }
