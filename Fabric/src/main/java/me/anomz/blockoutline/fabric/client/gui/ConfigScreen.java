@@ -13,6 +13,10 @@ public class ConfigScreen extends Screen {
     private final Screen lastScreen;
     private final ConfigHelper config;
 
+    // Master toggle
+    private boolean customOutlineEnabled;
+    private boolean syncRgbEnabled;
+
     // Outline sliders
     private ColorSlider outlineRedSlider;
     private ColorSlider outlineGreenSlider;
@@ -35,6 +39,8 @@ public class ConfigScreen extends Screen {
         super(Component.literal("Block Outline Customizer"));
         this.lastScreen = lastScreen;
         this.config = Services.getConfigHelper();
+        this.customOutlineEnabled = config.isCustomOutlineEnabled();
+        this.syncRgbEnabled = config.isSyncRgb();
         this.outlineRgbEnabled = config.isOutlineRgbEnabled();
         this.fillRgbEnabled = config.isFillRgbEnabled();
     }
@@ -50,8 +56,27 @@ public class ConfigScreen extends Screen {
         int sliderWidth = 150;
         int spacing = 26;
 
+        // --- TOP: Enable Custom Outline + Sync RGB ---
+        int topY = 32;
+
+        Component enabledText = Component.literal("Enable Custom Outline");
+        int enabledWidth = this.font.width(enabledText) + 24;
+        this.addRenderableWidget(Checkbox.builder(enabledText, this.font)
+                .pos(centerX - enabledWidth - 5, topY)
+                .selected(customOutlineEnabled)
+                .onValueChange((checkbox, selected) -> customOutlineEnabled = selected)
+                .build());
+
+        Component syncRgbText = Component.literal("Sync RGB");
+        int syncRgbWidth = this.font.width(syncRgbText) + 24;
+        this.addRenderableWidget(Checkbox.builder(syncRgbText, this.font)
+                .pos(centerX + 5, topY)
+                .selected(syncRgbEnabled)
+                .onValueChange((checkbox, selected) -> syncRgbEnabled = selected)
+                .build());
+
         // --- OUTLINE SECTION (LEFT) ---
-        int outlineY = 60;
+        int outlineY = 70;
 
         Component outlineRgbText = Component.literal("Rainbow Outline");
         int outlineRgbWidth = this.font.width(outlineRgbText) + 24;
@@ -131,7 +156,7 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(outlineWidthSlider);
 
         // --- FILL SECTION (RIGHT) ---
-        int fillY = 60;
+        int fillY = 70;
 
         Component fillEnabledText = Component.literal("Enable Fill");
         int fillEnabledWidth = this.font.width(fillEnabledText) + 24;
@@ -208,6 +233,11 @@ public class ConfigScreen extends Screen {
         );
         this.addRenderableWidget(fillOpacitySlider);
 
+        // Reset to Defaults button
+        this.addRenderableWidget(Button.builder(Component.literal("Reset to Defaults"), b -> resetToDefaults())
+                .bounds(centerX - 100, this.height - 56, 200, 20)
+                .build());
+
         // Done button
         this.addRenderableWidget(Button.builder(Component.literal("Done"), b -> saveAndClose())
                 .bounds(centerX - 100, this.height - 30, 200, 20)
@@ -225,11 +255,13 @@ public class ConfigScreen extends Screen {
 
         graphics.drawCenteredString(this.font, this.title, centerX, 15, 0xFFFFFFFF);
         
-        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 42, 0xFF00FFFF);
-        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 42, 0xFF00FFFF);
+        graphics.drawCenteredString(this.font, "Outline Settings", leftColumnCenter, 56, 0xFF00FFFF);
+        graphics.drawCenteredString(this.font, "Fill Settings", rightColumnCenter, 56, 0xFF00FFFF);
     }
 
     private void saveAndClose() {
+        config.setCustomOutlineEnabled(customOutlineEnabled);
+        config.setSyncRgb(syncRgbEnabled);
         // Save outline settings
         config.setOutlineRed(outlineRedSlider.getIntValue());
         config.setOutlineGreen(outlineGreenSlider.getIntValue());
@@ -251,6 +283,15 @@ public class ConfigScreen extends Screen {
         config.save();
 
         this.minecraft.setScreen(lastScreen);
+    }
+
+    private void resetToDefaults() {
+        config.resetToDefaults();
+        this.customOutlineEnabled = config.isCustomOutlineEnabled();
+        this.syncRgbEnabled = config.isSyncRgb();
+        this.outlineRgbEnabled = config.isOutlineRgbEnabled();
+        this.fillRgbEnabled = config.isFillRgbEnabled();
+        this.rebuildWidgets();
     }
 
     @Override

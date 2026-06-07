@@ -7,6 +7,26 @@ public class FabricConfigHelper implements ConfigHelper {
     private static final OutlineConfig CONFIG = OutlineConfig.load();
 
     @Override
+    public boolean isCustomOutlineEnabled() {
+        return CONFIG.customOutlineEnabled;
+    }
+
+    @Override
+    public void setCustomOutlineEnabled(boolean enabled) {
+        CONFIG.customOutlineEnabled = enabled;
+    }
+
+    @Override
+    public boolean isSyncRgb() {
+        return CONFIG.syncRgb;
+    }
+
+    @Override
+    public void setSyncRgb(boolean sync) {
+        CONFIG.syncRgb = sync;
+    }
+
+    @Override
     public int getOutlineRed() {
         return CONFIG.outlineRed;
     }
@@ -151,6 +171,27 @@ public class FabricConfigHelper implements ConfigHelper {
 
     @Override
     public void save() {
+        CONFIG.save();
+    }
+
+    @Override
+    public void resetToDefaults() {
+        CONFIG.customOutlineEnabled = true;
+        CONFIG.syncRgb = false;
+        CONFIG.outlineRed = 0;
+        CONFIG.outlineGreen = 255;
+        CONFIG.outlineBlue = 255;
+        CONFIG.outlineOpacity = 1.0;
+        CONFIG.outlineWidth = 3.0;
+        CONFIG.outlineRgbEnabled = false;
+        CONFIG.outlineRgbSpeed = 1.0;
+        CONFIG.fillEnabled = false;
+        CONFIG.fillRed = 255;
+        CONFIG.fillGreen = 255;
+        CONFIG.fillBlue = 255;
+        CONFIG.fillOpacity = 0.3;
+        CONFIG.fillRgbEnabled = false;
+        CONFIG.fillRgbSpeed = 1.0;
         CONFIG.save();
     }
 }

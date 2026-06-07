@@ -6,6 +6,10 @@ public class OutlineConfig {
     public static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SPEC;
 
+    // Master toggle
+    public static final ModConfigSpec.BooleanValue CUSTOM_OUTLINE_ENABLED;
+    public static final ModConfigSpec.BooleanValue SYNC_RGB;
+
     // Outline settings
     public static final ModConfigSpec.IntValue OUTLINE_RED;
     public static final ModConfigSpec.IntValue OUTLINE_GREEN;
@@ -25,6 +29,16 @@ public class OutlineConfig {
     public static final ModConfigSpec.DoubleValue FILL_RGB_SPEED;
 
     static {
+        BUILDER.push("General");
+
+        CUSTOM_OUTLINE_ENABLED = BUILDER.comment("Enable custom block outline rendering")
+                .define("customOutlineEnabled", true);
+
+        SYNC_RGB = BUILDER.comment("Sync fill RGB with outline RGB")
+                .define("syncRgb", false);
+
+        BUILDER.pop();
+
         BUILDER.push("Outline Settings");
 
         OUTLINE_RED = BUILDER.comment("Outline red color value (0-255)")
