@@ -279,12 +279,12 @@ public class ConfigScreen extends Screen {
 
         config.save();
 
-        this.minecraft.setScreen(lastScreen);
+        this.minecraft.gui.setScreen(lastScreen);
     }
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(lastScreen);
+        this.minecraft.gui.setScreen(lastScreen);
     }
 
     private void resetToDefaults() {

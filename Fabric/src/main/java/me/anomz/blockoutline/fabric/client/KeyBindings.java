@@ -13,14 +13,14 @@ public class KeyBindings {
     public static void register() {
         openConfigKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key." + Constants.MOD_ID + ".openconfig",
-                GLFW.GLFW_KEY_O,
+                GLFW.GLFW_KEY_U,
                 KeyMapping.Category.MISC
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (openConfigKey.consumeClick()) {
-                if (client.screen == null) {
-                    client.setScreen(new ConfigScreen(null));
+                if (client.gui.screen() == null) {
+                    client.gui.setScreen(new ConfigScreen(null));
                 }
             }
         });

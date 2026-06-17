@@ -13,7 +13,7 @@ public class KeyBindings {
             "key.blockoutlinecustomizer.openconfig",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_O,
+            GLFW.GLFW_KEY_U,
             KeyMapping.Category.register(Identifier.parse(KEY_CATEGORY))
     );
 }

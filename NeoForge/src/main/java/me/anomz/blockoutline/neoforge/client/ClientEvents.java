@@ -15,7 +15,7 @@ public class ClientEvents {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         if (KeyBindings.OPEN_CONFIG_KEY.consumeClick()) {
-            minecraft.setScreen(new ConfigScreen(minecraft.screen));
+            minecraft.gui.setScreen(new ConfigScreen(minecraft.gui.screen()));
         }
     }
 
