@@ -1,25 +1,56 @@
+# Block Outline Customizer
 
-Installation information
-=======
+A client-side Minecraft mod that lets you fully customize the block selection outline.
+Available for **Fabric** and **NeoForge**.
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+## Features
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+- **Custom colors** — RGB sliders for the outline and an optional translucent fill
+- **Outline styles** — Full, Dashed, or Corner brackets
+- **Width & opacity** — outline width from 1 to 10, fully adjustable opacity
+- **Rainbow mode** — animated RGB cycling with adjustable speed, optionally synced between outline and fill
+- **Pulse** — breathing opacity animation
+- **Presets** — built-in looks (Classic, Neon, Subtle, Rainbow) plus a savable Custom slot
+- **Per-block overrides** — give specific blocks or block tags their own style (e.g. highlight `#c:ores` in gold), editable in the config file
+- **In-game config screen** — press **U** (rebindable), or open it from ModMenu (Fabric) / the mod list Config button (NeoForge)
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+## Configuration
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+Everything can be changed from the in-game screen. The config file is shared by both
+loaders and lives at `config/blockoutlinecustomizer.json`.
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+### Per-block overrides
+
+Overrides are edited in the config file. Each entry matches block ids or `#`-prefixed
+block tags and applies its own complete style:
+
+```json
+"blockOverrides": [
+  {
+    "name": "Ores",
+    "enabled": true,
+    "blocks": ["#c:ores", "minecraft:ancient_debris"],
+    "style": {
+      "outlineRed": 255,
+      "outlineGreen": 170,
+      "outlineBlue": 0,
+      "outlineWidth": 3.0
+    }
+  }
+]
+```
+
+Unspecified style fields use their defaults. The first matching override wins.
+
+## Building
+
+```bash
+./gradlew build
+```
+
+Jars are produced in `Fabric/build/libs` and `NeoForge/build/libs`. Requires Java 25
+(Gradle downloads a toolchain automatically).
+
+## License
+
+[MIT](LICENSE)

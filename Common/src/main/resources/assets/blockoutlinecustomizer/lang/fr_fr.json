@@ -1,0 +1,37 @@
+{
+  "key.categories.blockoutlinecustomizer": "Block Outline Customizer",
+  "key.blockoutlinecustomizer.openconfig": "Ouvrir la config du contour de bloc",
+
+  "blockoutlinecustomizer.screen.title": "Block Outline Customizer",
+  "blockoutlinecustomizer.section.outline": "Contour",
+  "blockoutlinecustomizer.section.fill": "Remplissage",
+  "blockoutlinecustomizer.section.general": "Général",
+
+  "blockoutlinecustomizer.option.style": "Style",
+  "blockoutlinecustomizer.style.full": "Plein",
+  "blockoutlinecustomizer.style.dashed": "Pointillés",
+  "blockoutlinecustomizer.style.corners": "Coins",
+
+  "blockoutlinecustomizer.option.rgb": "RVB",
+  "blockoutlinecustomizer.option.speed": "Vitesse : %s",
+  "blockoutlinecustomizer.option.red": "Rouge : %s",
+  "blockoutlinecustomizer.option.green": "Vert : %s",
+  "blockoutlinecustomizer.option.blue": "Bleu : %s",
+  "blockoutlinecustomizer.option.opacity": "Opacité : %s",
+  "blockoutlinecustomizer.option.width": "Épaisseur : %s",
+  "blockoutlinecustomizer.option.pulse": "Pulsation",
+  "blockoutlinecustomizer.option.fill_enable": "Activer le remplissage",
+  "blockoutlinecustomizer.option.enable_custom": "Contour personnalisé",
+  "blockoutlinecustomizer.option.sync_rgb": "Synchroniser RVB",
+
+  "blockoutlinecustomizer.preset": "Préréglage",
+  "blockoutlinecustomizer.preset.classic": "Classique",
+  "blockoutlinecustomizer.preset.neon": "Néon",
+  "blockoutlinecustomizer.preset.subtle": "Discret",
+  "blockoutlinecustomizer.preset.rainbow": "Arc-en-ciel",
+  "blockoutlinecustomizer.preset.custom": "Personnalisé",
+  "blockoutlinecustomizer.preset.apply": "Appliquer le préréglage",
+  "blockoutlinecustomizer.preset.save_custom": "Enregistrer comme personnalisé",
+
+  "blockoutlinecustomizer.reset": "Réinitialiser"
+}

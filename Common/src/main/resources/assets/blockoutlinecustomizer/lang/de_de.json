@@ -1,0 +1,37 @@
+{
+  "key.categories.blockoutlinecustomizer": "Block Outline Customizer",
+  "key.blockoutlinecustomizer.openconfig": "Blockumriss-Konfiguration öffnen",
+
+  "blockoutlinecustomizer.screen.title": "Block Outline Customizer",
+  "blockoutlinecustomizer.section.outline": "Umriss",
+  "blockoutlinecustomizer.section.fill": "Füllung",
+  "blockoutlinecustomizer.section.general": "Allgemein",
+
+  "blockoutlinecustomizer.option.style": "Stil",
+  "blockoutlinecustomizer.style.full": "Durchgezogen",
+  "blockoutlinecustomizer.style.dashed": "Gestrichelt",
+  "blockoutlinecustomizer.style.corners": "Ecken",
+
+  "blockoutlinecustomizer.option.rgb": "RGB",
+  "blockoutlinecustomizer.option.speed": "Tempo: %s",
+  "blockoutlinecustomizer.option.red": "Rot: %s",
+  "blockoutlinecustomizer.option.green": "Grün: %s",
+  "blockoutlinecustomizer.option.blue": "Blau: %s",
+  "blockoutlinecustomizer.option.opacity": "Deckkraft: %s",
+  "blockoutlinecustomizer.option.width": "Breite: %s",
+  "blockoutlinecustomizer.option.pulse": "Pulsieren",
+  "blockoutlinecustomizer.option.fill_enable": "Füllung aktivieren",
+  "blockoutlinecustomizer.option.enable_custom": "Eigener Umriss",
+  "blockoutlinecustomizer.option.sync_rgb": "RGB synchronisieren",
+
+  "blockoutlinecustomizer.preset": "Vorlage",
+  "blockoutlinecustomizer.preset.classic": "Klassisch",
+  "blockoutlinecustomizer.preset.neon": "Neon",
+  "blockoutlinecustomizer.preset.subtle": "Dezent",
+  "blockoutlinecustomizer.preset.rainbow": "Regenbogen",
+  "blockoutlinecustomizer.preset.custom": "Eigene",
+  "blockoutlinecustomizer.preset.apply": "Vorlage anwenden",
+  "blockoutlinecustomizer.preset.save_custom": "Als Eigene speichern",
+
+  "blockoutlinecustomizer.reset": "Auf Standard zurücksetzen"
+}
