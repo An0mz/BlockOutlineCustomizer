@@ -4,12 +4,9 @@ subprojects {
     group = mod_group_id
     version = mod_version
 
-    // Only apply these to non-Fabric subprojects
-    if (project.name != 'Fabric') {
-        java {
-            toolchain.languageVersion = JavaLanguageVersion.of(25)
-            withSourcesJar()
-        }
+    java {
+        toolchain.languageVersion = JavaLanguageVersion.of(25)
+        withSourcesJar()
     }
 
     repositories {

@@ -3,6 +3,7 @@ package me.anomz.blockoutline.fabric.mixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.anomz.blockoutline.platform.ConfigHelper;
 import me.anomz.blockoutline.platform.Services;
+import me.anomz.blockoutline.util.RainbowColor;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
@@ -15,9 +16,8 @@ import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.awt.Color;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
@@ -49,45 +49,35 @@ public class LevelRendererMixin {
         poseStack.popPose();
     }
 
-    @org.spongepowered.asm.mixin.Unique
+    @Unique
     private static void renderOutline(SubmitNodeCollector submitNodeCollector, PoseStack poseStack, VoxelShape shape, ConfigHelper config) {
-        int red, green, blue;
+        int rgb;
 
         if (config.isOutlineRgbEnabled()) {
-            float speed = (float) config.getOutlineRgbSpeed();
-            float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
-            float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
-            Color color = Color.getHSBColor(hue, 1.0f, 1.0f);
-            red = color.getRed();
-            green = color.getGreen();
-            blue = color.getBlue();
+            rgb = RainbowColor.rgb(config.getOutlineRgbSpeed()) & 0xFFFFFF;
         } else {
-            red = config.getOutlineRed();
-            green = config.getOutlineGreen();
-            blue = config.getOutlineBlue();
+            rgb = (config.getOutlineRed() << 16) | (config.getOutlineGreen() << 8) | config.getOutlineBlue();
         }
 
         int alpha = (int) (config.getOutlineOpacity() * 255);
         float lineWidth = (float) config.getOutlineWidth();
-        int packedColor = (alpha << 24) | (red << 16) | (green << 8) | blue;
+        int packedColor = (alpha << 24) | rgb;
 
         submitNodeCollector.submitShapeOutline(poseStack, shape, RenderTypes.lines(), packedColor, lineWidth, false);
     }
 
-    @org.spongepowered.asm.mixin.Unique
+    @Unique
     private static void renderFill(SubmitNodeCollector submitNodeCollector, PoseStack poseStack, VoxelShape shape, ConfigHelper config) {
         final float red, green, blue;
 
         boolean useRgb = config.isFillRgbEnabled() || (config.isSyncRgb() && config.isOutlineRgbEnabled());
         if (useRgb) {
-            float speed = config.isSyncRgb() && config.isOutlineRgbEnabled()
-                    ? (float) config.getOutlineRgbSpeed() : (float) config.getFillRgbSpeed();
-            float timeInSeconds = (System.currentTimeMillis() % 100000L) / 1000.0f;
-            float hue = (timeInSeconds * speed / 10.0f) % 1.0f;
-            Color color = Color.getHSBColor(hue, 1.0f, 1.0f);
-            red = color.getRed() / 255.0f;
-            green = color.getGreen() / 255.0f;
-            blue = color.getBlue() / 255.0f;
+            double speed = config.isSyncRgb() && config.isOutlineRgbEnabled()
+                    ? config.getOutlineRgbSpeed() : config.getFillRgbSpeed();
+            int rgb = RainbowColor.rgb(speed);
+            red = ((rgb >> 16) & 0xFF) / 255.0f;
+            green = ((rgb >> 8) & 0xFF) / 255.0f;
+            blue = (rgb & 0xFF) / 255.0f;
         } else {
             red = config.getFillRed() / 255.0f;
             green = config.getFillGreen() / 255.0f;
