@@ -1,6 +1,7 @@
 package me.anomz.blockoutline.neoforge.client;
 
 import me.anomz.blockoutline.client.render.OutlineRenderCore;
+import me.anomz.blockoutline.config.BOCConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -10,7 +11,27 @@ import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 
 public class OutlineRenderer {
 
-    public static void onRenderBlockHighlight(RenderHighlightEvent.Block event) {
+    /**
+     * Force mode: registered at HIGHEST priority so we run before mods that
+     * draw their own highlight (AE2 cables etc.) and cancel first.
+     */
+    public static void onHighlightFirst(RenderHighlightEvent.Block event) {
+        if (BOCConfig.get().forceOutline) {
+            render(event);
+        }
+    }
+
+    /**
+     * Normal mode: registered at LOWEST priority without receiving canceled
+     * events, so mods with their own highlight renderers keep theirs.
+     */
+    public static void onHighlightLast(RenderHighlightEvent.Block event) {
+        if (!BOCConfig.get().forceOutline) {
+            render(event);
+        }
+    }
+
+    private static void render(RenderHighlightEvent.Block event) {
         if (!OutlineRenderCore.customOutlineActive()) {
             return; // Let vanilla render
         }

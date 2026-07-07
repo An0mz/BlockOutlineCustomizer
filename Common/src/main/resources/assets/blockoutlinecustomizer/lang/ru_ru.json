@@ -1,17 +1,14 @@
 {
   "key.categories.blockoutlinecustomizer": "Block Outline Customizer",
   "key.blockoutlinecustomizer.openconfig": "Открыть настройки обводки блока",
-
   "blockoutlinecustomizer.screen.title": "Block Outline Customizer",
   "blockoutlinecustomizer.section.outline": "Обводка",
   "blockoutlinecustomizer.section.fill": "Заливка",
   "blockoutlinecustomizer.section.general": "Общее",
-
   "blockoutlinecustomizer.option.style": "Стиль",
   "blockoutlinecustomizer.style.full": "Сплошная",
   "blockoutlinecustomizer.style.dashed": "Пунктир",
   "blockoutlinecustomizer.style.corners": "Углы",
-
   "blockoutlinecustomizer.option.rgb": "RGB",
   "blockoutlinecustomizer.option.speed": "Скорость: %s",
   "blockoutlinecustomizer.option.red": "Красный: %s",
@@ -23,17 +20,17 @@
   "blockoutlinecustomizer.option.fill_enable": "Включить заливку",
   "blockoutlinecustomizer.option.enable_custom": "Своя обводка",
   "blockoutlinecustomizer.option.sync_rgb": "Синхронизировать RGB",
-
   "blockoutlinecustomizer.section.effects": "Эффекты",
   "blockoutlinecustomizer.option.gradient": "RGB из угла",
   "blockoutlinecustomizer.option.fill_rgb": "RGB заливки",
   "blockoutlinecustomizer.option.moving": "Движение",
   "blockoutlinecustomizer.option.quad_width": "Фикс шейдеров",
   "blockoutlinecustomizer.option.quad_width.tooltip": "Включите при шейдерах - толщина будет работать с шейдер-паками",
+  "blockoutlinecustomizer.option.force": "Принудительный контур",
+  "blockoutlinecustomizer.option.force.tooltip": "Заменяет контуры других модов (например, кабелей AE2) — их особая подсветка станет контуром всего блока",
   "blockoutlinecustomizer.palette": "Цвета RGB",
   "blockoutlinecustomizer.palette.add": "Добавить",
   "blockoutlinecustomizer.hex": "Hex",
-
   "blockoutlinecustomizer.preset": "Пресет",
   "blockoutlinecustomizer.preset.classic": "Классический",
   "blockoutlinecustomizer.preset.neon": "Неон",
@@ -42,6 +39,5 @@
   "blockoutlinecustomizer.preset.custom": "Свой",
   "blockoutlinecustomizer.preset.apply": "Применить пресет",
   "blockoutlinecustomizer.preset.save_custom": "Сохранить как свой",
-
   "blockoutlinecustomizer.reset": "Сбросить настройки"
 }

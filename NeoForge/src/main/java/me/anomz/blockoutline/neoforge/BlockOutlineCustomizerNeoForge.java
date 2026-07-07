@@ -34,7 +34,13 @@ public class BlockOutlineCustomizerNeoForge {
     private void clientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ClientEvents::onClientTick);
-            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(OutlineRenderer::onRenderBlockHighlight);
+            // Force mode runs first so it wins over mods with their own highlight
+            // (AE2 etc.); normal mode runs last and skips canceled events, so
+            // those mods keep theirs.
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(
+                    net.neoforged.bus.api.EventPriority.HIGHEST, OutlineRenderer::onHighlightFirst);
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(
+                    net.neoforged.bus.api.EventPriority.LOWEST, OutlineRenderer::onHighlightLast);
         });
     }
 }
