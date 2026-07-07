@@ -13,7 +13,7 @@ public class KeyBindings {
             "key." + Constants.MOD_ID + ".openconfig",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_O,
+            GLFW.GLFW_KEY_U,
             KEY_CATEGORY
     );
 }

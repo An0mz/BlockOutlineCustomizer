@@ -6,11 +6,8 @@ base {
     archivesName = "${mod_id}-common"
 }
 
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
-    withSourcesJar()
-}
-
 dependencies {
-    // No dependencies - this is just shared code
+    // Provided by Minecraft at runtime in both loaders
+    compileOnly 'com.google.code.gson:gson:2.11.0'
+    compileOnly 'org.slf4j:slf4j-api:2.0.16'
 }
