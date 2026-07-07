@@ -105,14 +105,14 @@ public final class OutlineRenderCore {
 
         poseStack.pushPose();
         poseStack.translate(pos.getX() - cameraPos.x, pos.getY() - cameraPos.y, pos.getZ() - cameraPos.z);
-        Matrix4f matrix = poseStack.last().pose();
+        PoseStack.Pose pose = poseStack.last();
 
         double pulse = pulseFactor(style);
 
         if (style.fillEnabled) {
-            renderFill(bufferSource, shape, matrix, fillColor(style, pulse));
+            renderFill(bufferSource, shape, pose.pose(), fillColor(style, pulse));
         }
-        renderOutline(bufferSource, shape, matrix, style, pulse,
+        renderOutline(bufferSource, shape, pose, style, pulse,
                 (float) (pos.getX() - cameraPos.x), (float) (pos.getY() - cameraPos.y), (float) (pos.getZ() - cameraPos.z));
 
         poseStack.popPose();
@@ -189,7 +189,7 @@ public final class OutlineRenderCore {
         }
     }
 
-    private static void renderOutline(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, StyleSettings style, double pulse,
+    private static void renderOutline(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, PoseStack.Pose pose, StyleSettings style, double pulse,
                                       float relX, float relY, float relZ) {
         int alpha = (int) Math.round(style.outlineOpacity * pulse * 255.0);
         if (alpha <= 0) {
@@ -203,7 +203,7 @@ public final class OutlineRenderCore {
         int uniformColor = alphaBits | (outlineColor(style, pulse) & 0xFFFFFF);
 
         if (style.outlineQuadWidth) {
-            renderQuadOutline(bufferSource, shape, matrix, style, gradient, baseT, phase, alphaBits, uniformColor, width, relX, relY, relZ);
+            renderQuadOutline(bufferSource, shape, pose.pose(), style, gradient, baseT, phase, alphaBits, uniformColor, width, relX, relY, relZ);
             return;
         }
 
@@ -227,10 +227,10 @@ public final class OutlineRenderCore {
                         float f1 = from + (to - from) * (i + 1) / steps;
                         int c0 = alphaBits | gradientRgb(style, baseT, x1 + nx * f0, y1 + ny * f0, z1 + nz * f0);
                         int c1 = alphaBits | gradientRgb(style, baseT, x1 + nx * f1, y1 + ny * f1, z1 + nz * f1);
-                        addLine(vc, matrix, x1, y1, z1, nx, ny, nz, f0, f1, c0, c1);
+                        addLine(vc, pose, x1, y1, z1, nx, ny, nz, f0, f1, c0, c1);
                     }
                 } else {
-                    addLine(vc, matrix, x1, y1, z1, nx, ny, nz, from, to, uniformColor, uniformColor);
+                    addLine(vc, pose, x1, y1, z1, nx, ny, nz, from, to, uniformColor, uniformColor);
                 }
             });
         });
@@ -341,17 +341,21 @@ public final class OutlineRenderCore {
         quadVertex(vc, matrix, a0x + sx, a0y + sy, a0z + sz, colorFrom, 0, 0, vnx, vny, vnz);
     }
 
-    private static void addLine(VertexConsumer vc, Matrix4f matrix,
+    private static void addLine(VertexConsumer vc, PoseStack.Pose pose,
                                 float x, float y, float z,
                                 float nx, float ny, float nz,
                                 float from, float to, int colorFrom, int colorTo) {
-        vc.vertex(matrix, x + nx * from, y + ny * from, z + nz * from)
+        // The lines shader derives the screen-space width from Position + Normal,
+        // both in view space: the direction must go through the pose's normal
+        // matrix (the pose carries the camera rotation here), or the line
+        // collapses at certain view angles.
+        vc.vertex(pose.pose(), x + nx * from, y + ny * from, z + nz * from)
                 .color(colorFrom)
-                .normal(nx, ny, nz)
+                .normal(pose.normal(), nx, ny, nz)
                 .endVertex();
-        vc.vertex(matrix, x + nx * to, y + ny * to, z + nz * to)
+        vc.vertex(pose.pose(), x + nx * to, y + ny * to, z + nz * to)
                 .color(colorTo)
-                .normal(nx, ny, nz)
+                .normal(pose.normal(), nx, ny, nz)
                 .endVertex();
     }
 
