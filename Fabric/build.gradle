@@ -23,6 +23,9 @@ sourceSets {
 
 repositories {
     maven { url = 'https://maven.terraformersmc.com/releases' }
+    maven {
+        url "https://cursemaven.com"
+    }
 }
 
 loom {
@@ -40,6 +43,10 @@ dependencies {
 
     // ModMenu config screen integration (compile against the API only)
     compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+    // Shader mods for in-dev testing only: runtime classpath, never compiled against
+    runtimeOnly "curse.maven:sodium-394468:8111041"
+    runtimeOnly "curse.maven:irisshaders-455508:7867943"
 }
 
 processResources {

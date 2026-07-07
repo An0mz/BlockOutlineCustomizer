@@ -28,6 +28,8 @@
   "blockoutlinecustomizer.option.gradient": "从角落渐变",
   "blockoutlinecustomizer.option.fill_rgb": "填充 RGB",
   "blockoutlinecustomizer.option.moving": "移动",
+  "blockoutlinecustomizer.option.quad_width": "着色器修复",
+  "blockoutlinecustomizer.option.quad_width.tooltip": "开启着色器时使用 - 使宽度滑块在着色器包下生效",
   "blockoutlinecustomizer.palette": "RGB 颜色",
   "blockoutlinecustomizer.palette.add": "添加",
   "blockoutlinecustomizer.hex": "十六进制",

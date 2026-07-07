@@ -28,6 +28,8 @@
   "blockoutlinecustomizer.option.gradient": "RGB из угла",
   "blockoutlinecustomizer.option.fill_rgb": "RGB заливки",
   "blockoutlinecustomizer.option.moving": "Движение",
+  "blockoutlinecustomizer.option.quad_width": "Фикс шейдеров",
+  "blockoutlinecustomizer.option.quad_width.tooltip": "Включите при шейдерах - толщина будет работать с шейдер-паками",
   "blockoutlinecustomizer.palette": "Цвета RGB",
   "blockoutlinecustomizer.palette.add": "Добавить",
   "blockoutlinecustomizer.hex": "Hex",

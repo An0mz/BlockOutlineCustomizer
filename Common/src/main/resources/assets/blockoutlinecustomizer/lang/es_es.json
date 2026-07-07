@@ -28,6 +28,8 @@
   "blockoutlinecustomizer.option.gradient": "RGB desde esquina",
   "blockoutlinecustomizer.option.fill_rgb": "RGB de relleno",
   "blockoutlinecustomizer.option.moving": "Movimiento",
+  "blockoutlinecustomizer.option.quad_width": "Arreglo de shaders",
+  "blockoutlinecustomizer.option.quad_width.tooltip": "Usar con shaders activos - el grosor funciona con packs de shaders",
   "blockoutlinecustomizer.palette": "Colores RGB",
   "blockoutlinecustomizer.palette.add": "Añadir",
   "blockoutlinecustomizer.hex": "Hex",
