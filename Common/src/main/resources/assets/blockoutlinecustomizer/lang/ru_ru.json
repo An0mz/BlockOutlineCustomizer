@@ -24,6 +24,14 @@
   "blockoutlinecustomizer.option.enable_custom": "Своя обводка",
   "blockoutlinecustomizer.option.sync_rgb": "Синхронизировать RGB",
 
+  "blockoutlinecustomizer.section.effects": "Эффекты",
+  "blockoutlinecustomizer.option.gradient": "RGB из угла",
+  "blockoutlinecustomizer.option.fill_rgb": "RGB заливки",
+  "blockoutlinecustomizer.option.moving": "Движение",
+  "blockoutlinecustomizer.palette": "Цвета RGB",
+  "blockoutlinecustomizer.palette.add": "Добавить",
+  "blockoutlinecustomizer.hex": "Hex",
+
   "blockoutlinecustomizer.preset": "Пресет",
   "blockoutlinecustomizer.preset.classic": "Классический",
   "blockoutlinecustomizer.preset.neon": "Неон",

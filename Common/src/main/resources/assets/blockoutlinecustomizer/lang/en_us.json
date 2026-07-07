@@ -24,6 +24,14 @@
   "blockoutlinecustomizer.option.enable_custom": "Custom Outline",
   "blockoutlinecustomizer.option.sync_rgb": "Sync RGB",
 
+  "blockoutlinecustomizer.section.effects": "Effects",
+  "blockoutlinecustomizer.option.gradient": "RGB from corner",
+  "blockoutlinecustomizer.option.fill_rgb": "Fill RGB",
+  "blockoutlinecustomizer.option.moving": "Moving",
+  "blockoutlinecustomizer.palette": "RGB Colors",
+  "blockoutlinecustomizer.palette.add": "Add",
+  "blockoutlinecustomizer.hex": "Hex",
+
   "blockoutlinecustomizer.preset": "Preset",
   "blockoutlinecustomizer.preset.classic": "Classic",
   "blockoutlinecustomizer.preset.neon": "Neon",

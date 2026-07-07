@@ -24,6 +24,14 @@
   "blockoutlinecustomizer.option.enable_custom": "Contorno personalizado",
   "blockoutlinecustomizer.option.sync_rgb": "Sincronizar RGB",
 
+  "blockoutlinecustomizer.section.effects": "Efectos",
+  "blockoutlinecustomizer.option.gradient": "RGB desde esquina",
+  "blockoutlinecustomizer.option.fill_rgb": "RGB de relleno",
+  "blockoutlinecustomizer.option.moving": "Movimiento",
+  "blockoutlinecustomizer.palette": "Colores RGB",
+  "blockoutlinecustomizer.palette.add": "Añadir",
+  "blockoutlinecustomizer.hex": "Hex",
+
   "blockoutlinecustomizer.preset": "Preajuste",
   "blockoutlinecustomizer.preset.classic": "Clásico",
   "blockoutlinecustomizer.preset.neon": "Neón",

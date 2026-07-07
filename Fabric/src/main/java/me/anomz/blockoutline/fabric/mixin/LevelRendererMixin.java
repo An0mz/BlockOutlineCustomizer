@@ -2,7 +2,6 @@ package me.anomz.blockoutline.fabric.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.anomz.blockoutline.client.render.OutlineRenderCore;
-import me.anomz.blockoutline.config.BOCConfig;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
@@ -18,7 +17,7 @@ public class LevelRendererMixin {
 
     @Inject(method = "submitBlockOutline", at = @At("HEAD"), cancellable = true)
     private void onSubmitBlockOutline(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, LevelRenderState levelRenderState, CallbackInfo ci) {
-        if (!BOCConfig.get().customOutlineEnabled) return;
+        if (!OutlineRenderCore.customOutlineActive()) return;
 
         BlockOutlineRenderState outlineState = levelRenderState.blockOutlineRenderState;
         if (outlineState == null) return;
