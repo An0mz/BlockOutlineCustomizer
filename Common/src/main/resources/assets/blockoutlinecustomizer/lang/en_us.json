@@ -28,6 +28,8 @@
   "blockoutlinecustomizer.option.gradient": "RGB from corner",
   "blockoutlinecustomizer.option.fill_rgb": "Fill RGB",
   "blockoutlinecustomizer.option.moving": "Moving",
+  "blockoutlinecustomizer.option.quad_width": "Shader fix",
+  "blockoutlinecustomizer.option.quad_width.tooltip": "Use when shaders are on - makes the width slider work with shader packs",
   "blockoutlinecustomizer.palette": "RGB Colors",
   "blockoutlinecustomizer.palette.add": "Add",
   "blockoutlinecustomizer.hex": "Hex",

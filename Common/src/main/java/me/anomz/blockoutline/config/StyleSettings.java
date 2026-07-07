@@ -22,6 +22,11 @@ public class StyleSettings {
     public double outlineRgbSpeed = 1.0;
     /** When RGB is on, flow the colors spatially from the block's corner instead of one uniform color. */
     public boolean outlineRgbGradient = false;
+    /**
+     * Draw the outline as camera-facing quads instead of GPU lines. Fixes the
+     * width slider when a resource/shader pack overrides the line shader.
+     */
+    public boolean outlineQuadWidth = false;
 
     // Marching animation for the dashed style
     public boolean movingEnabled = false;
@@ -92,6 +97,7 @@ public class StyleSettings {
         c.outlineRgbEnabled = outlineRgbEnabled;
         c.outlineRgbSpeed = outlineRgbSpeed;
         c.outlineRgbGradient = outlineRgbGradient;
+        c.outlineQuadWidth = outlineQuadWidth;
         c.movingEnabled = movingEnabled;
         c.movingSpeed = movingSpeed;
         c.pulseEnabled = pulseEnabled;
@@ -119,7 +125,7 @@ public class StyleSettings {
         outlineBlue = clamp(outlineBlue);
         outlineOpacity = clamp(outlineOpacity, 0.0, 1.0);
         outlineWidth = clamp(outlineWidth, 1.0, 10.0);
-        outlineRgbSpeed = clamp(outlineRgbSpeed, 0.01, 2.0);
+        outlineRgbSpeed = clamp(outlineRgbSpeed, 0.1, 10.0);
         movingSpeed = clamp(movingSpeed, 0.01, 2.0);
         pulseSpeed = clamp(pulseSpeed, 0.01, 2.0);
         pulseMinOpacity = clamp(pulseMinOpacity, 0.0, 1.0);
@@ -127,7 +133,7 @@ public class StyleSettings {
         fillGreen = clamp(fillGreen);
         fillBlue = clamp(fillBlue);
         fillOpacity = clamp(fillOpacity, 0.0, 1.0);
-        fillRgbSpeed = clamp(fillRgbSpeed, 0.01, 2.0);
+        fillRgbSpeed = clamp(fillRgbSpeed, 0.1, 10.0);
         if (rgbColors == null) rgbColors = new ArrayList<>();
         List<String> cleaned = new ArrayList<>();
         for (String entry : rgbColors) {

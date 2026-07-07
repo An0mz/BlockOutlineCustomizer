@@ -151,6 +151,16 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(new StyledSlider(this.font, x, y, w, widgetH,
                 "blockoutlinecustomizer.option.width", 1.0, 10.0, false,
                 () -> working.outlineWidth, v -> working.outlineWidth = v));
+        y += rowStep;
+
+        Checkbox shaderFix = Checkbox.builder(Component.translatable("blockoutlinecustomizer.option.quad_width"), this.font)
+                .pos(x, y)
+                .selected(working.outlineQuadWidth)
+                .onValueChange((cb, v) -> working.outlineQuadWidth = v)
+                .build();
+        shaderFix.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                Component.translatable("blockoutlinecustomizer.option.quad_width.tooltip")));
+        this.addRenderableWidget(shaderFix);
     }
 
     private void initFillTab(int x, int y, int w) {
@@ -175,6 +185,7 @@ public class ConfigScreen extends Screen {
         y = addToggleWithSpeed(x, y, w,
                 Component.translatable("blockoutlinecustomizer.option.rgb"),
                 working.outlineRgbEnabled, v -> working.outlineRgbEnabled = v,
+                0.1, 10.0,
                 () -> working.outlineRgbSpeed, v -> working.outlineRgbSpeed = v);
 
         this.addRenderableWidget(Checkbox.builder(Component.translatable("blockoutlinecustomizer.option.gradient"), this.font)
@@ -187,6 +198,7 @@ public class ConfigScreen extends Screen {
         y = addToggleWithSpeed(x, y, w,
                 Component.translatable("blockoutlinecustomizer.option.fill_rgb"),
                 working.fillRgbEnabled, v -> working.fillRgbEnabled = v,
+                0.1, 10.0,
                 () -> working.fillRgbSpeed, v -> working.fillRgbSpeed = v);
 
         this.addRenderableWidget(Checkbox.builder(Component.translatable("blockoutlinecustomizer.option.sync_rgb"), this.font)
@@ -199,11 +211,13 @@ public class ConfigScreen extends Screen {
         y = addToggleWithSpeed(x, y, w,
                 Component.translatable("blockoutlinecustomizer.option.pulse"),
                 working.pulseEnabled, v -> working.pulseEnabled = v,
+                0.01, 2.0,
                 () -> working.pulseSpeed, v -> working.pulseSpeed = v);
 
         y = addToggleWithSpeed(x, y, w,
                 Component.translatable("blockoutlinecustomizer.option.moving"),
                 working.movingEnabled, v -> working.movingEnabled = v,
+                0.01, 2.0,
                 () -> working.movingSpeed, v -> working.movingSpeed = v);
 
         // Palette editor: hex input + add, then removable swatches
@@ -281,6 +295,7 @@ public class ConfigScreen extends Screen {
 
     private int addToggleWithSpeed(int x, int y, int w, Component label,
                                    boolean selected, java.util.function.Consumer<Boolean> onToggle,
+                                   double speedMin, double speedMax,
                                    DoubleSupplier speedGet, DoubleConsumer speedSet) {
         int checkboxWidth = this.font.width(label) + 28;
         this.addRenderableWidget(Checkbox.builder(label, this.font)
@@ -292,7 +307,7 @@ public class ConfigScreen extends Screen {
         int sliderX = x + checkboxWidth;
         int sliderW = Math.max(40, w - checkboxWidth);
         this.addRenderableWidget(new StyledSlider(this.font, sliderX, y, sliderW, widgetH,
-                "blockoutlinecustomizer.option.speed", 0.01, 2.0, false, speedGet, speedSet));
+                "blockoutlinecustomizer.option.speed", speedMin, speedMax, false, speedGet, speedSet));
         return y + rowStep;
     }
 

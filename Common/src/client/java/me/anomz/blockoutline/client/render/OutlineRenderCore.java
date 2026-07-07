@@ -9,10 +9,12 @@ import me.anomz.blockoutline.config.OutlineStyle;
 import me.anomz.blockoutline.config.StyleSettings;
 import me.anomz.blockoutline.util.Animations;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.joml.Matrix4f;
 
 /**
  * Loader-independent outline + fill rendering. Both the Fabric mixin and the
@@ -28,7 +30,34 @@ public final class OutlineRenderCore {
     /** Subdivision step (in blocks) for smooth per-vertex gradient colors. */
     private static final float GRADIENT_STEP = 0.125f;
 
+    private static final net.minecraft.resources.Identifier WHITE_TEXTURE =
+            net.minecraft.resources.Identifier.fromNamespaceAndPath(me.anomz.blockoutline.Constants.MOD_ID, "textures/white.png");
+    /** Packed fullbright lightmap coords (block 15 / sky 15). */
+    private static final int FULL_BRIGHT = 0xF000F0;
+
     private OutlineRenderCore() {
+    }
+
+    /**
+     * Render type for our solid-color quads (fill + shader-fix outline).
+     * Entity-translucent-emissive geometry is processed by shader packs,
+     * unlike the debug render types which Iris drops when a pack is active.
+     * Known limitation: some packs render entity translucency without alpha
+     * blending, making the opacity sliders act as on/off under those packs.
+     */
+    private static RenderType quadRenderType() {
+        return RenderTypes.entityTranslucentEmissive(WHITE_TEXTURE);
+    }
+
+    private static void quadVertex(VertexConsumer vc, Matrix4f matrix,
+                                   float x, float y, float z, int color, float u, float v,
+                                   float nx, float ny, float nz) {
+        vc.addVertex(matrix, x, y, z)
+                .setColor(color)
+                .setUv(u, v)
+                .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY)
+                .setLight(FULL_BRIGHT)
+                .setNormal(nx, ny, nz);
     }
 
     /** Emits the from/to distances of the sub-segments a styled edge is split into. */
@@ -54,7 +83,8 @@ public final class OutlineRenderCore {
         if (style.fillEnabled) {
             renderFill(collector, poseStack, shape, fillColor(style, pulse));
         }
-        renderOutline(collector, poseStack, shape, style, pulse);
+        renderOutline(collector, poseStack, shape, style, pulse,
+                (float) (pos.getX() - cameraPos.x), (float) (pos.getY() - cameraPos.y), (float) (pos.getZ() - cameraPos.z));
 
         poseStack.popPose();
     }
@@ -130,23 +160,30 @@ public final class OutlineRenderCore {
         }
     }
 
-    private static void renderOutline(SubmitNodeCollector collector, PoseStack poseStack, VoxelShape shape, StyleSettings style, double pulse) {
+    private static void renderOutline(SubmitNodeCollector collector, PoseStack poseStack, VoxelShape shape, StyleSettings style, double pulse,
+                                      float relX, float relY, float relZ) {
         int alpha = (int) Math.round(style.outlineOpacity * pulse * 255.0);
         if (alpha <= 0) {
             return;
         }
         float width = (float) style.outlineWidth;
+        boolean gradient = style.outlineRgbEnabled && style.outlineRgbGradient;
+        int uniformColor = (alpha << 24) | (outlineColor(style, pulse) & 0xFFFFFF);
 
-        if (style.outlineRgbEnabled && style.outlineRgbGradient) {
+        if (style.outlineQuadWidth) {
+            renderQuadOutline(collector, poseStack, shape, style, gradient, alpha << 24, uniformColor, width, relX, relY, relZ);
+            return;
+        }
+
+        if (gradient) {
             submitGradientLines(collector, poseStack, shape, style, alpha << 24, width);
             return;
         }
 
-        int color = (alpha << 24) | (outlineColor(style, pulse) & 0xFFFFFF);
         if (style.outlineStyle == OutlineStyle.FULL) {
-            collector.submitShapeOutline(poseStack, shape, RenderTypes.lines(), color, width, false);
+            collector.submitShapeOutline(poseStack, shape, RenderTypes.lines(), uniformColor, width, false);
         } else {
-            submitSegmentedLines(collector, poseStack, shape, style, color, width);
+            submitSegmentedLines(collector, poseStack, shape, style, uniformColor, width);
         }
     }
 
@@ -201,6 +238,111 @@ public final class OutlineRenderCore {
                 }));
     }
 
+    /**
+     * Shader-fix width mode: draws each outline segment as a camera-facing quad
+     * ribbon through the entity pipeline, so the width works even when a
+     * resource/shader pack overrides the vanilla line shader. The ribbon width
+     * scales with distance to stay roughly constant on screen.
+     */
+    private static void renderQuadOutline(SubmitNodeCollector collector, PoseStack poseStack, VoxelShape shape, StyleSettings style,
+                                          boolean gradient, int alphaBits, int uniformColor, float width,
+                                          float relX, float relY, float relZ) {
+        float phase = dashPhase(style);
+        double baseT = Animations.rainbowHue(style.outlineRgbSpeed);
+        int screenHeight = Math.max(1, net.minecraft.client.Minecraft.getInstance().getWindow().getHeight());
+        // World units per requested pixel per block of distance, assuming ~70 degree FOV.
+        float widthFactor = width * 1.4f / screenHeight;
+
+        collector.submitCustomGeometry(poseStack, quadRenderType(), (pose, vc) -> {
+            Matrix4f matrix = pose.pose();
+            shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
+                float x1 = (float) minX, y1 = (float) minY, z1 = (float) minZ;
+                float dx = (float) (maxX - minX), dy = (float) (maxY - minY), dz = (float) (maxZ - minZ);
+                float length = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+                if (length < 1e-6f) {
+                    return;
+                }
+                float nx = dx / length, ny = dy / length, nz = dz / length;
+
+                segments(style.outlineStyle, length, phase, (from, to) -> {
+                    if (gradient) {
+                        int steps = Math.max(1, (int) Math.ceil((to - from) / GRADIENT_STEP));
+                        for (int i = 0; i < steps; i++) {
+                            float f0 = from + (to - from) * i / steps;
+                            float f1 = from + (to - from) * (i + 1) / steps;
+                            int c0 = alphaBits | gradientRgb(style, baseT, x1 + nx * f0, y1 + ny * f0, z1 + nz * f0);
+                            int c1 = alphaBits | gradientRgb(style, baseT, x1 + nx * f1, y1 + ny * f1, z1 + nz * f1);
+                            emitRibbon(vc, matrix, x1, y1, z1, nx, ny, nz, f0, f1, c0, c1, relX, relY, relZ, widthFactor);
+                        }
+                    } else {
+                        emitRibbon(vc, matrix, x1, y1, z1, nx, ny, nz, from, to, uniformColor, uniformColor, relX, relY, relZ, widthFactor);
+                    }
+                });
+            });
+        });
+    }
+
+    private static void emitRibbon(VertexConsumer vc, Matrix4f matrix,
+                                   float x, float y, float z,
+                                   float nx, float ny, float nz,
+                                   float from, float to, int colorFrom, int colorTo,
+                                   float relX, float relY, float relZ, float widthFactor) {
+        float p0x = x + nx * from, p0y = y + ny * from, p0z = z + nz * from;
+        float p1x = x + nx * to, p1y = y + ny * to, p1z = z + nz * to;
+
+        // Camera-relative midpoint (camera sits at -rel in local space)
+        float mx = (p0x + p1x) / 2.0f + relX;
+        float my = (p0y + p1y) / 2.0f + relY;
+        float mz = (p0z + p1z) / 2.0f + relZ;
+        float dist = (float) Math.sqrt(mx * mx + my * my + mz * mz);
+        if (dist < 1e-4f) {
+            return;
+        }
+
+        // Perpendicular to the edge and the view direction -> screen-facing ribbon
+        float sx = ny * mz - nz * my;
+        float sy = nz * mx - nx * mz;
+        float sz = nx * my - ny * mx;
+        float sl = (float) Math.sqrt(sx * sx + sy * sy + sz * sz);
+        if (sl < 1e-5f) {
+            // Edge points straight at the camera; any perpendicular works
+            sx = -ny;
+            sy = nx;
+            sz = 0;
+            sl = (float) Math.sqrt(sx * sx + sy * sy + sz * sz);
+            if (sl < 1e-5f) {
+                sx = 0;
+                sy = 0;
+                sz = 1;
+                sl = 1;
+            }
+        }
+        float half = Math.max(dist * widthFactor, 0.004f) / 2.0f;
+        sx = sx / sl * half;
+        sy = sy / sl * half;
+        sz = sz / sl * half;
+
+        // Pull slightly toward the camera to avoid z-fighting with block faces
+        // (same idea as the vanilla line shader's VIEW_SHRINK).
+        final float shrink = 0.994f;
+        float a0x = (p0x + relX) * shrink - relX, a0y = (p0y + relY) * shrink - relY, a0z = (p0z + relZ) * shrink - relZ;
+        float a1x = (p1x + relX) * shrink - relX, a1y = (p1y + relY) * shrink - relY, a1z = (p1z + relZ) * shrink - relZ;
+
+        // Normal pointing back at the camera
+        float vnx = -mx / dist, vny = -my / dist, vnz = -mz / dist;
+
+        // Both windings so the ribbon is visible regardless of cull direction
+        quadVertex(vc, matrix, a0x + sx, a0y + sy, a0z + sz, colorFrom, 0, 0, vnx, vny, vnz);
+        quadVertex(vc, matrix, a0x - sx, a0y - sy, a0z - sz, colorFrom, 0, 1, vnx, vny, vnz);
+        quadVertex(vc, matrix, a1x - sx, a1y - sy, a1z - sz, colorTo, 1, 1, vnx, vny, vnz);
+        quadVertex(vc, matrix, a1x + sx, a1y + sy, a1z + sz, colorTo, 1, 0, vnx, vny, vnz);
+
+        quadVertex(vc, matrix, a1x + sx, a1y + sy, a1z + sz, colorTo, 1, 0, vnx, vny, vnz);
+        quadVertex(vc, matrix, a1x - sx, a1y - sy, a1z - sz, colorTo, 1, 1, vnx, vny, vnz);
+        quadVertex(vc, matrix, a0x - sx, a0y - sy, a0z - sz, colorFrom, 0, 1, vnx, vny, vnz);
+        quadVertex(vc, matrix, a0x + sx, a0y + sy, a0z + sz, colorFrom, 0, 0, vnx, vny, vnz);
+    }
+
     private static void addLine(VertexConsumer vc, PoseStack.Pose pose,
                                 float x, float y, float z,
                                 float nx, float ny, float nz,
@@ -221,52 +363,42 @@ public final class OutlineRenderCore {
         }
         final float offset = 0.001f;
 
-        collector.submitCustomGeometry(poseStack, RenderTypes.debugQuads(), (pose, vc) -> {
-            org.joml.Matrix4f matrix = pose.pose();
+        collector.submitCustomGeometry(poseStack, quadRenderType(), (pose, vc) -> {
+            Matrix4f matrix = pose.pose();
             shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
-                float sMinX = (float) minX - offset;
-                float sMinY = (float) minY - offset;
-                float sMinZ = (float) minZ - offset;
-                float sMaxX = (float) maxX + offset;
-                float sMaxY = (float) maxY + offset;
-                float sMaxZ = (float) maxZ + offset;
+                float x0 = (float) minX - offset;
+                float y0 = (float) minY - offset;
+                float z0 = (float) minZ - offset;
+                float x1 = (float) maxX + offset;
+                float y1 = (float) maxY + offset;
+                float z1 = (float) maxZ + offset;
 
-                // Bottom face (Y-)
-                vc.addVertex(matrix, sMinX, sMinY, sMinZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMinY, sMinZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMinY, sMaxZ).setColor(color);
-                vc.addVertex(matrix, sMinX, sMinY, sMaxZ).setColor(color);
-
-                // Top face (Y+)
-                vc.addVertex(matrix, sMinX, sMaxY, sMinZ).setColor(color);
-                vc.addVertex(matrix, sMinX, sMaxY, sMaxZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMaxY, sMaxZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMaxY, sMinZ).setColor(color);
-
-                // North face (Z-)
-                vc.addVertex(matrix, sMinX, sMinY, sMinZ).setColor(color);
-                vc.addVertex(matrix, sMinX, sMaxY, sMinZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMaxY, sMinZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMinY, sMinZ).setColor(color);
-
-                // South face (Z+)
-                vc.addVertex(matrix, sMinX, sMinY, sMaxZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMinY, sMaxZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMaxY, sMaxZ).setColor(color);
-                vc.addVertex(matrix, sMinX, sMaxY, sMaxZ).setColor(color);
-
-                // West face (X-)
-                vc.addVertex(matrix, sMinX, sMinY, sMinZ).setColor(color);
-                vc.addVertex(matrix, sMinX, sMinY, sMaxZ).setColor(color);
-                vc.addVertex(matrix, sMinX, sMaxY, sMaxZ).setColor(color);
-                vc.addVertex(matrix, sMinX, sMaxY, sMinZ).setColor(color);
-
-                // East face (X+)
-                vc.addVertex(matrix, sMaxX, sMinY, sMinZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMaxY, sMinZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMaxY, sMaxZ).setColor(color);
-                vc.addVertex(matrix, sMaxX, sMinY, sMaxZ).setColor(color);
+                // Bottom (Y-), Top (Y+)
+                fillFace(vc, matrix, color, 0, -1, 0, x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z1);
+                fillFace(vc, matrix, color, 0, 1, 0, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0);
+                // North (Z-), South (Z+)
+                fillFace(vc, matrix, color, 0, 0, -1, x0, y0, z0, x0, y1, z0, x1, y1, z0, x1, y0, z0);
+                fillFace(vc, matrix, color, 0, 0, 1, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
+                // West (X-), East (X+)
+                fillFace(vc, matrix, color, -1, 0, 0, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0);
+                fillFace(vc, matrix, color, 1, 0, 0, x1, y0, z0, x1, y1, z0, x1, y1, z1, x1, y0, z1);
             });
         });
+    }
+
+    /** One solid face, emitted with both windings so culling can't hide it. */
+    private static void fillFace(VertexConsumer vc, Matrix4f matrix, int color,
+                                 float nx, float ny, float nz,
+                                 float ax, float ay, float az, float bx, float by, float bz,
+                                 float cx, float cy, float cz, float dx, float dy, float dz) {
+        quadVertex(vc, matrix, ax, ay, az, color, 0, 0, nx, ny, nz);
+        quadVertex(vc, matrix, bx, by, bz, color, 0, 1, nx, ny, nz);
+        quadVertex(vc, matrix, cx, cy, cz, color, 1, 1, nx, ny, nz);
+        quadVertex(vc, matrix, dx, dy, dz, color, 1, 0, nx, ny, nz);
+
+        quadVertex(vc, matrix, dx, dy, dz, color, 1, 0, -nx, -ny, -nz);
+        quadVertex(vc, matrix, cx, cy, cz, color, 1, 1, -nx, -ny, -nz);
+        quadVertex(vc, matrix, bx, by, bz, color, 0, 1, -nx, -ny, -nz);
+        quadVertex(vc, matrix, ax, ay, az, color, 0, 0, -nx, -ny, -nz);
     }
 }
