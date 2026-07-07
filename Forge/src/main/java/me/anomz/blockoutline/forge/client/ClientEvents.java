@@ -1,14 +1,10 @@
 package me.anomz.blockoutline.forge.client;
 
-import me.anomz.blockoutline.forge.client.gui.ConfigScreen;
-import me.anomz.blockoutline.forge.platform.ForgeConfigHelper;
+import me.anomz.blockoutline.client.gui.ConfigScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEvents {
 
     @SubscribeEvent
@@ -21,7 +17,7 @@ public class ClientEvents {
 
         while (KeyBindings.OPEN_CONFIG_KEY.consumeClick()) {
             if (minecraft.screen == null) {
-                minecraft.setScreen(new ConfigScreen(null, new ForgeConfigHelper()));
+                minecraft.setScreen(new ConfigScreen(null));
             }
         }
     }

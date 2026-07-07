@@ -12,7 +12,7 @@ public class KeyBindings {
         OPEN_CONFIG_KEY = new KeyMapping(
                 "key.blockoutlinecustomizer.config",
                 InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_O,
+                GLFW.GLFW_KEY_U,
                 "key.categories.misc"
         );
 

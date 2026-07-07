@@ -6,7 +6,7 @@ license="MIT"
 modId="blockoutlinecustomizer"
 version="${version}"
 displayName="Block Outline Customizer"
-description='''Customize your block outline color, opacity, and width.'''
+description='''Customize your block selection outline: colors, styles, fill, presets, per-block overrides, RGB and pulse effects!'''
 authors="Anomz"
 
 [[dependencies.blockoutlinecustomizer]]

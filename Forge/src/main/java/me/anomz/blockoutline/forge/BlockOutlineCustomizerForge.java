@@ -1,14 +1,14 @@
 package me.anomz.blockoutline.forge;
 
 import me.anomz.blockoutline.Constants;
+import me.anomz.blockoutline.client.gui.ConfigScreen;
 import me.anomz.blockoutline.forge.client.ClientEvents;
 import me.anomz.blockoutline.forge.client.KeyBindings;
 import me.anomz.blockoutline.forge.client.OutlineRenderer;
-import me.anomz.blockoutline.forge.config.OutlineConfig;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -18,7 +18,8 @@ public class BlockOutlineCustomizerForge {
     public BlockOutlineCustomizerForge() {
         var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, OutlineConfig.SPEC);
+        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+                () -> new ConfigScreenHandler.ConfigScreenFactory((mc, parent) -> new ConfigScreen(parent)));
 
         modEventBus.addListener(this::onClientSetup);
         modEventBus.addListener(KeyBindings::register);

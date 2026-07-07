@@ -13,8 +13,10 @@ public class BlockOutlineCustomizerFabric implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("Block Outline Customizer (Fabric) initialized!");
 
+        // Register key bindings
         KeyBindings.register();
 
+        // Register events
         ClientEvents.register();
     }
 }

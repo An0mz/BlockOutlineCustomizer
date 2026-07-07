@@ -36,6 +36,7 @@ processResources {
 sourceSets.main {
     java {
         srcDir project(':Common').file('src/main/java')
+        srcDir project(':Common').file('src/client/java')
     }
     resources {
         srcDir project(':Common').file('src/main/resources')
