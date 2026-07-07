@@ -12,12 +12,13 @@ group = mod_group_id
 
 repositories {
     mavenCentral()
+    maven { url = 'https://maven.terraformersmc.com/releases' }
 }
 
 sourceSets {
     main {
         java {
-            srcDirs += ['../Common/src/main/java']
+            srcDirs += ['../Common/src/main/java', '../Common/src/client/java']
         }
         resources {
             srcDirs += ['../Common/src/main/resources']
@@ -28,6 +29,9 @@ sourceSets {
 dependencies {
     minecraft "com.mojang:minecraft:1.21.11"
     mappings loom.officialMojangMappings()
+
+    // ModMenu config screen integration (compile against the API only)
+    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     modImplementation "net.fabricmc:fabric-loader:0.18.1"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.140.2+1.21.11"

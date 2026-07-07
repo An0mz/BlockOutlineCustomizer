@@ -14,7 +14,7 @@ version = "${mod_version}"
 sourceSets {
     main {
         java {
-            srcDirs += ['../Common/src/main/java']
+            srcDirs += ['../Common/src/main/java', '../Common/src/client/java']
         }
         resources {
             srcDirs += ['../Common/src/main/resources']
