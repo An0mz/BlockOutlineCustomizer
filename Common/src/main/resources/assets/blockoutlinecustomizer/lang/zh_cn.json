@@ -1,0 +1,45 @@
+{
+  "key.categories.blockoutlinecustomizer": "Block Outline Customizer",
+  "key.blockoutlinecustomizer.openconfig": "打开方块轮廓设置",
+
+  "blockoutlinecustomizer.screen.title": "方块轮廓自定义",
+  "blockoutlinecustomizer.section.outline": "轮廓",
+  "blockoutlinecustomizer.section.fill": "填充",
+  "blockoutlinecustomizer.section.general": "常规",
+
+  "blockoutlinecustomizer.option.style": "样式",
+  "blockoutlinecustomizer.style.full": "实线",
+  "blockoutlinecustomizer.style.dashed": "虚线",
+  "blockoutlinecustomizer.style.corners": "边角",
+
+  "blockoutlinecustomizer.option.rgb": "RGB",
+  "blockoutlinecustomizer.option.speed": "速度：%s",
+  "blockoutlinecustomizer.option.red": "红：%s",
+  "blockoutlinecustomizer.option.green": "绿：%s",
+  "blockoutlinecustomizer.option.blue": "蓝：%s",
+  "blockoutlinecustomizer.option.opacity": "不透明度：%s",
+  "blockoutlinecustomizer.option.width": "宽度：%s",
+  "blockoutlinecustomizer.option.pulse": "脉冲",
+  "blockoutlinecustomizer.option.fill_enable": "启用填充",
+  "blockoutlinecustomizer.option.enable_custom": "自定义轮廓",
+  "blockoutlinecustomizer.option.sync_rgb": "同步 RGB",
+
+  "blockoutlinecustomizer.section.effects": "效果",
+  "blockoutlinecustomizer.option.gradient": "从角落渐变",
+  "blockoutlinecustomizer.option.fill_rgb": "填充 RGB",
+  "blockoutlinecustomizer.option.moving": "移动",
+  "blockoutlinecustomizer.palette": "RGB 颜色",
+  "blockoutlinecustomizer.palette.add": "添加",
+  "blockoutlinecustomizer.hex": "十六进制",
+
+  "blockoutlinecustomizer.preset": "预设",
+  "blockoutlinecustomizer.preset.classic": "经典",
+  "blockoutlinecustomizer.preset.neon": "霓虹",
+  "blockoutlinecustomizer.preset.subtle": "低调",
+  "blockoutlinecustomizer.preset.rainbow": "彩虹",
+  "blockoutlinecustomizer.preset.custom": "自定义",
+  "blockoutlinecustomizer.preset.apply": "应用预设",
+  "blockoutlinecustomizer.preset.save_custom": "保存为自定义",
+
+  "blockoutlinecustomizer.reset": "恢复默认"
+}

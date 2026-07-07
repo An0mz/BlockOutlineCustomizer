@@ -3,16 +3,23 @@
   "id": "blockoutlinecustomizer",
   "version": "${version}",
   "name": "Block Outline Customizer",
-  "description": "Customize your block outlines with colors, width, and RGB effects!",
+  "description": "Customize your block outlines with colors, styles, presets, and RGB effects!",
   "authors": [
     "Anomz"
   ],
-  "contact": {},
+  "contact": {
+    "sources": "https://github.com/An0mz/BlockOutlineCustomizer",
+    "issues": "https://github.com/An0mz/BlockOutlineCustomizer/issues"
+  },
   "license": "MIT",
-  "environment": "*",
+  "icon": "assets/blockoutlinecustomizer/icon.png",
+  "environment": "client",
   "entrypoints": {
     "client": [
       "me.anomz.blockoutline.fabric.BlockOutlineCustomizerFabric"
+    ],
+    "modmenu": [
+      "me.anomz.blockoutline.fabric.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -23,5 +30,8 @@
     "minecraft": "~26.1",
     "java": ">=25",
     "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
   }
 }

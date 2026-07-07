@@ -1,0 +1,45 @@
+{
+  "key.categories.blockoutlinecustomizer": "Block Outline Customizer",
+  "key.blockoutlinecustomizer.openconfig": "Open Block Outline Config",
+
+  "blockoutlinecustomizer.screen.title": "Block Outline Customizer",
+  "blockoutlinecustomizer.section.outline": "Outline",
+  "blockoutlinecustomizer.section.fill": "Fill",
+  "blockoutlinecustomizer.section.general": "General",
+
+  "blockoutlinecustomizer.option.style": "Style",
+  "blockoutlinecustomizer.style.full": "Full",
+  "blockoutlinecustomizer.style.dashed": "Dashed",
+  "blockoutlinecustomizer.style.corners": "Corners",
+
+  "blockoutlinecustomizer.option.rgb": "RGB",
+  "blockoutlinecustomizer.option.speed": "Speed: %s",
+  "blockoutlinecustomizer.option.red": "Red: %s",
+  "blockoutlinecustomizer.option.green": "Green: %s",
+  "blockoutlinecustomizer.option.blue": "Blue: %s",
+  "blockoutlinecustomizer.option.opacity": "Opacity: %s",
+  "blockoutlinecustomizer.option.width": "Width: %s",
+  "blockoutlinecustomizer.option.pulse": "Pulse",
+  "blockoutlinecustomizer.option.fill_enable": "Enable Fill",
+  "blockoutlinecustomizer.option.enable_custom": "Custom Outline",
+  "blockoutlinecustomizer.option.sync_rgb": "Sync RGB",
+
+  "blockoutlinecustomizer.section.effects": "Effects",
+  "blockoutlinecustomizer.option.gradient": "RGB from corner",
+  "blockoutlinecustomizer.option.fill_rgb": "Fill RGB",
+  "blockoutlinecustomizer.option.moving": "Moving",
+  "blockoutlinecustomizer.palette": "RGB Colors",
+  "blockoutlinecustomizer.palette.add": "Add",
+  "blockoutlinecustomizer.hex": "Hex",
+
+  "blockoutlinecustomizer.preset": "Preset",
+  "blockoutlinecustomizer.preset.classic": "Classic",
+  "blockoutlinecustomizer.preset.neon": "Neon",
+  "blockoutlinecustomizer.preset.subtle": "Subtle",
+  "blockoutlinecustomizer.preset.rainbow": "Rainbow",
+  "blockoutlinecustomizer.preset.custom": "Custom",
+  "blockoutlinecustomizer.preset.apply": "Apply Preset",
+  "blockoutlinecustomizer.preset.save_custom": "Save as Custom",
+
+  "blockoutlinecustomizer.reset": "Reset to Defaults"
+}

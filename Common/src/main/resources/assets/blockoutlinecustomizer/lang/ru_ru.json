@@ -1,0 +1,45 @@
+{
+  "key.categories.blockoutlinecustomizer": "Block Outline Customizer",
+  "key.blockoutlinecustomizer.openconfig": "Открыть настройки обводки блока",
+
+  "blockoutlinecustomizer.screen.title": "Block Outline Customizer",
+  "blockoutlinecustomizer.section.outline": "Обводка",
+  "blockoutlinecustomizer.section.fill": "Заливка",
+  "blockoutlinecustomizer.section.general": "Общее",
+
+  "blockoutlinecustomizer.option.style": "Стиль",
+  "blockoutlinecustomizer.style.full": "Сплошная",
+  "blockoutlinecustomizer.style.dashed": "Пунктир",
+  "blockoutlinecustomizer.style.corners": "Углы",
+
+  "blockoutlinecustomizer.option.rgb": "RGB",
+  "blockoutlinecustomizer.option.speed": "Скорость: %s",
+  "blockoutlinecustomizer.option.red": "Красный: %s",
+  "blockoutlinecustomizer.option.green": "Зелёный: %s",
+  "blockoutlinecustomizer.option.blue": "Синий: %s",
+  "blockoutlinecustomizer.option.opacity": "Непрозрачность: %s",
+  "blockoutlinecustomizer.option.width": "Толщина: %s",
+  "blockoutlinecustomizer.option.pulse": "Пульсация",
+  "blockoutlinecustomizer.option.fill_enable": "Включить заливку",
+  "blockoutlinecustomizer.option.enable_custom": "Своя обводка",
+  "blockoutlinecustomizer.option.sync_rgb": "Синхронизировать RGB",
+
+  "blockoutlinecustomizer.section.effects": "Эффекты",
+  "blockoutlinecustomizer.option.gradient": "RGB из угла",
+  "blockoutlinecustomizer.option.fill_rgb": "RGB заливки",
+  "blockoutlinecustomizer.option.moving": "Движение",
+  "blockoutlinecustomizer.palette": "Цвета RGB",
+  "blockoutlinecustomizer.palette.add": "Добавить",
+  "blockoutlinecustomizer.hex": "Hex",
+
+  "blockoutlinecustomizer.preset": "Пресет",
+  "blockoutlinecustomizer.preset.classic": "Классический",
+  "blockoutlinecustomizer.preset.neon": "Неон",
+  "blockoutlinecustomizer.preset.subtle": "Скромный",
+  "blockoutlinecustomizer.preset.rainbow": "Радуга",
+  "blockoutlinecustomizer.preset.custom": "Свой",
+  "blockoutlinecustomizer.preset.apply": "Применить пресет",
+  "blockoutlinecustomizer.preset.save_custom": "Сохранить как свой",
+
+  "blockoutlinecustomizer.reset": "Сбросить настройки"
+}
