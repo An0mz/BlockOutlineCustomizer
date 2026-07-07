@@ -1,18 +1,41 @@
 package me.anomz.blockoutline.forge.client;
 
 import me.anomz.blockoutline.client.render.OutlineRenderCore;
+import me.anomz.blockoutline.config.BOCConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.event.RenderHighlightEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class OutlineRenderer {
 
-    @SubscribeEvent
-    public static void onRenderBlockHighlight(RenderHighlightEvent.Block event) {
+    /**
+     * Force mode: run before mods that draw their own highlight (AE2 cables
+     * etc.) and cancel the event first so ours wins.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onHighlightFirst(RenderHighlightEvent.Block event) {
+        if (BOCConfig.get().forceOutline) {
+            render(event);
+        }
+    }
+
+    /**
+     * Normal mode: run last, without receiving canceled events, so mods with
+     * their own highlight renderers keep theirs.
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onHighlightLast(RenderHighlightEvent.Block event) {
+        if (!BOCConfig.get().forceOutline) {
+            render(event);
+        }
+    }
+
+    private static void render(RenderHighlightEvent.Block event) {
         if (!OutlineRenderCore.customOutlineActive()) {
             return; // Let vanilla render
         }

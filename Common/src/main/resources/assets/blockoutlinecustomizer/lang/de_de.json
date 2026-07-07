@@ -1,17 +1,14 @@
 {
   "key.categories.blockoutlinecustomizer": "Block Outline Customizer",
   "key.blockoutlinecustomizer.openconfig": "Blockumriss-Konfiguration öffnen",
-
   "blockoutlinecustomizer.screen.title": "Block Outline Customizer",
   "blockoutlinecustomizer.section.outline": "Umriss",
   "blockoutlinecustomizer.section.fill": "Füllung",
   "blockoutlinecustomizer.section.general": "Allgemein",
-
   "blockoutlinecustomizer.option.style": "Stil",
   "blockoutlinecustomizer.style.full": "Durchgezogen",
   "blockoutlinecustomizer.style.dashed": "Gestrichelt",
   "blockoutlinecustomizer.style.corners": "Ecken",
-
   "blockoutlinecustomizer.option.rgb": "RGB",
   "blockoutlinecustomizer.option.speed": "Tempo: %s",
   "blockoutlinecustomizer.option.red": "Rot: %s",
@@ -23,17 +20,17 @@
   "blockoutlinecustomizer.option.fill_enable": "Füllung aktivieren",
   "blockoutlinecustomizer.option.enable_custom": "Eigener Umriss",
   "blockoutlinecustomizer.option.sync_rgb": "RGB synchronisieren",
-
   "blockoutlinecustomizer.section.effects": "Effekte",
   "blockoutlinecustomizer.option.gradient": "RGB ab Ecke",
   "blockoutlinecustomizer.option.fill_rgb": "Füllung-RGB",
   "blockoutlinecustomizer.option.moving": "Bewegend",
   "blockoutlinecustomizer.option.quad_width": "Shader-Fix",
   "blockoutlinecustomizer.option.quad_width.tooltip": "Bei aktiven Shadern verwenden - Breitenregler funktioniert mit Shader-Packs",
+  "blockoutlinecustomizer.option.force": "Eigene Umrandung erzwingen",
+  "blockoutlinecustomizer.option.force.tooltip": "Überschreibt Mods mit eigener Umrandung (z. B. AE2-Kabel) - deren spezielle Markierung wird durch eine Vollblock-Umrandung ersetzt",
   "blockoutlinecustomizer.palette": "RGB-Farben",
   "blockoutlinecustomizer.palette.add": "Hinzufügen",
   "blockoutlinecustomizer.hex": "Hex",
-
   "blockoutlinecustomizer.preset": "Vorlage",
   "blockoutlinecustomizer.preset.classic": "Klassisch",
   "blockoutlinecustomizer.preset.neon": "Neon",
@@ -42,6 +39,5 @@
   "blockoutlinecustomizer.preset.custom": "Eigene",
   "blockoutlinecustomizer.preset.apply": "Vorlage anwenden",
   "blockoutlinecustomizer.preset.save_custom": "Als Eigene speichern",
-
   "blockoutlinecustomizer.reset": "Auf Standard zurücksetzen"
 }

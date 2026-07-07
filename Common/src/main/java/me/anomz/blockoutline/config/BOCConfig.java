@@ -30,6 +30,8 @@ public class BOCConfig {
             List.of(PRESET_CLASSIC, PRESET_NEON, PRESET_SUBTLE, PRESET_RAINBOW);
 
     public boolean customOutlineEnabled = true;
+    /** Also replace outlines drawn by other mods' custom highlight renderers (e.g. AE2 cables). */
+    public boolean forceOutline = false;
     public StyleSettings style = new StyleSettings();
     public LinkedHashMap<String, StyleSettings> presets = new LinkedHashMap<>();
     public List<BlockOverride> blockOverrides = new ArrayList<>();

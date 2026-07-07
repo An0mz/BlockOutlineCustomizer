@@ -49,6 +49,7 @@ public class ConfigScreen extends Screen {
 
     private StyleSettings working;
     private boolean customOutlineEnabled;
+    private boolean forceOutline;
     private Tab tab = Tab.OUTLINE;
     private String selectedPreset = BOCConfig.PRESET_NEON;
 
@@ -69,6 +70,7 @@ public class ConfigScreen extends Screen {
         this.config = BOCConfig.get();
         this.working = config.style.copy();
         this.customOutlineEnabled = config.customOutlineEnabled;
+        this.forceOutline = config.forceOutline;
     }
 
     @Override
@@ -246,6 +248,13 @@ public class ConfigScreen extends Screen {
     private void initGeneralTab(int x, int y, int w) {
         this.addRenderableWidget(new CallbackCheckbox(x, y, Component.translatable("blockoutlinecustomizer.option.enable_custom"), this.font,
                 customOutlineEnabled, v -> customOutlineEnabled = v));
+        y += rowStep;
+
+        Checkbox force = new CallbackCheckbox(x, y, Component.translatable("blockoutlinecustomizer.option.force"), this.font,
+                forceOutline, v -> forceOutline = v);
+        force.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                Component.translatable("blockoutlinecustomizer.option.force.tooltip")));
+        this.addRenderableWidget(force);
         y += rowStep;
 
         if (!config.presets.containsKey(selectedPreset)) {
@@ -556,6 +565,7 @@ public class ConfigScreen extends Screen {
 
     private void saveAndClose() {
         config.customOutlineEnabled = customOutlineEnabled;
+        config.forceOutline = forceOutline;
         config.style = working.copy();
         config.save();
         this.minecraft.setScreen(lastScreen);

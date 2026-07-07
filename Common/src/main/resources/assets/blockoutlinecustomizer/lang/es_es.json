@@ -1,17 +1,14 @@
 {
   "key.categories.blockoutlinecustomizer": "Block Outline Customizer",
   "key.blockoutlinecustomizer.openconfig": "Abrir configuración del contorno",
-
   "blockoutlinecustomizer.screen.title": "Block Outline Customizer",
   "blockoutlinecustomizer.section.outline": "Contorno",
   "blockoutlinecustomizer.section.fill": "Relleno",
   "blockoutlinecustomizer.section.general": "General",
-
   "blockoutlinecustomizer.option.style": "Estilo",
   "blockoutlinecustomizer.style.full": "Completo",
   "blockoutlinecustomizer.style.dashed": "Discontinuo",
   "blockoutlinecustomizer.style.corners": "Esquinas",
-
   "blockoutlinecustomizer.option.rgb": "RGB",
   "blockoutlinecustomizer.option.speed": "Velocidad: %s",
   "blockoutlinecustomizer.option.red": "Rojo: %s",
@@ -23,17 +20,17 @@
   "blockoutlinecustomizer.option.fill_enable": "Activar relleno",
   "blockoutlinecustomizer.option.enable_custom": "Contorno personalizado",
   "blockoutlinecustomizer.option.sync_rgb": "Sincronizar RGB",
-
   "blockoutlinecustomizer.section.effects": "Efectos",
   "blockoutlinecustomizer.option.gradient": "RGB desde esquina",
   "blockoutlinecustomizer.option.fill_rgb": "RGB de relleno",
   "blockoutlinecustomizer.option.moving": "Movimiento",
   "blockoutlinecustomizer.option.quad_width": "Arreglo de shaders",
   "blockoutlinecustomizer.option.quad_width.tooltip": "Usar con shaders activos - el grosor funciona con packs de shaders",
+  "blockoutlinecustomizer.option.force": "Forzar contorno personalizado",
+  "blockoutlinecustomizer.option.force.tooltip": "Anula los mods que dibujan su propio contorno (como los cables de AE2): su resaltado especial se sustituye por un contorno de bloque completo",
   "blockoutlinecustomizer.palette": "Colores RGB",
   "blockoutlinecustomizer.palette.add": "Añadir",
   "blockoutlinecustomizer.hex": "Hex",
-
   "blockoutlinecustomizer.preset": "Preajuste",
   "blockoutlinecustomizer.preset.classic": "Clásico",
   "blockoutlinecustomizer.preset.neon": "Neón",
@@ -42,6 +39,5 @@
   "blockoutlinecustomizer.preset.custom": "Personalizado",
   "blockoutlinecustomizer.preset.apply": "Aplicar preajuste",
   "blockoutlinecustomizer.preset.save_custom": "Guardar como personalizado",
-
   "blockoutlinecustomizer.reset": "Restablecer valores"
 }
