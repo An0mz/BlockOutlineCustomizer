@@ -39,5 +39,15 @@
   "blockoutlinecustomizer.preset.custom": "Personalizado",
   "blockoutlinecustomizer.preset.apply": "Aplicar predefinição",
   "blockoutlinecustomizer.preset.save_custom": "Salvar como personalizado",
-  "blockoutlinecustomizer.reset": "Restaurar padrões"
+  "blockoutlinecustomizer.reset": "Restaurar padrões",
+  "blockoutlinecustomizer.option.blink": "Piscar",
+  "blockoutlinecustomizer.option.blink.tooltip": "Pisca em vez de esmaecer suavemente",
+  "blockoutlinecustomizer.option.see_through": "Transparente",
+  "blockoutlinecustomizer.option.see_through.tooltip": "Mostra o contorno através de paredes e outros blocos",
+  "blockoutlinecustomizer.option.connected": "Conectados",
+  "blockoutlinecustomizer.option.connected.tooltip": "Contorna as duas metades de portas, camas, baús duplos, plantas altas e pistões como uma única forma",
+  "blockoutlinecustomizer.option.cube": "Forma de cubo",
+  "blockoutlinecustomizer.option.cube.tooltip": "Sempre contorna o cubo completo em vez da forma real do bloco",
+  "blockoutlinecustomizer.option.block_info": "Info do bloco",
+  "blockoutlinecustomizer.option.block_info.tooltip": "Mostra uma etiqueta flutuante com o nome, a posição e o estado do bloco"
 }

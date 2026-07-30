@@ -39,5 +39,15 @@
   "blockoutlinecustomizer.preset.custom": "Personnalisé",
   "blockoutlinecustomizer.preset.apply": "Appliquer le préréglage",
   "blockoutlinecustomizer.preset.save_custom": "Enregistrer comme personnalisé",
-  "blockoutlinecustomizer.reset": "Réinitialiser"
+  "blockoutlinecustomizer.reset": "Réinitialiser",
+  "blockoutlinecustomizer.option.blink": "Clignoter",
+  "blockoutlinecustomizer.option.blink.tooltip": "Clignote au lieu de s'estomper en douceur",
+  "blockoutlinecustomizer.option.see_through": "Transparent",
+  "blockoutlinecustomizer.option.see_through.tooltip": "Affiche le contour à travers les murs et les autres blocs",
+  "blockoutlinecustomizer.option.connected": "Connectés",
+  "blockoutlinecustomizer.option.connected.tooltip": "Entoure les deux moitiés des portes, lits, doubles coffres, grandes plantes et pistons comme une seule forme",
+  "blockoutlinecustomizer.option.cube": "Forme cube",
+  "blockoutlinecustomizer.option.cube.tooltip": "Entoure toujours le cube complet au lieu de la forme réelle du bloc",
+  "blockoutlinecustomizer.option.block_info": "Infos bloc",
+  "blockoutlinecustomizer.option.block_info.tooltip": "Affiche une étiquette flottante avec le nom, la position et l'état du bloc visé"
 }

@@ -36,6 +36,8 @@ public class StyleSettings {
     public boolean pulseEnabled = false;
     public double pulseSpeed = 1.0;
     public double pulseMinOpacity = 0.25;
+    /** Hard on/off flashing instead of the smooth fade. */
+    public boolean pulseBlink = false;
 
     // Fill
     public boolean fillEnabled = false;
@@ -103,6 +105,7 @@ public class StyleSettings {
         c.pulseEnabled = pulseEnabled;
         c.pulseSpeed = pulseSpeed;
         c.pulseMinOpacity = pulseMinOpacity;
+        c.pulseBlink = pulseBlink;
         c.fillEnabled = fillEnabled;
         c.fillRed = fillRed;
         c.fillGreen = fillGreen;

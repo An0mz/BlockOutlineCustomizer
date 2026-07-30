@@ -23,7 +23,7 @@ public class OutlineRenderer {
      */
     public static boolean beforeBlockOutline(WorldRenderContext context, HitResult hitResult) {
         renderedEarly = false;
-        if (!BOCConfig.get().forceOutline || !OutlineRenderCore.customOutlineActive()) {
+        if (!OutlineRenderCore.forceOutlineActive() || !OutlineRenderCore.customOutlineActive()) {
             return true;
         }
         if (!(hitResult instanceof BlockHitResult blockHit) || hitResult.getType() != HitResult.Type.BLOCK

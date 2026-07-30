@@ -74,4 +74,13 @@ public final class Animations {
         double wave = 0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 1000.0 * speed * Math.PI);
         return minFactor + (1.0 - minFactor) * wave;
     }
+
+    /**
+     * Hard on/off flashing: full opacity for half the cycle, minFactor for the
+     * other half. Same period as {@link #pulse} so the speed slider matches.
+     */
+    public static double blink(double speed, double minFactor) {
+        double phase = (System.currentTimeMillis() / 1000.0 * speed) % 2.0;
+        return phase < 1.0 ? 1.0 : minFactor;
+    }
 }

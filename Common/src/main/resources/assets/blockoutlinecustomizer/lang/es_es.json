@@ -39,5 +39,15 @@
   "blockoutlinecustomizer.preset.custom": "Personalizado",
   "blockoutlinecustomizer.preset.apply": "Aplicar preajuste",
   "blockoutlinecustomizer.preset.save_custom": "Guardar como personalizado",
-  "blockoutlinecustomizer.reset": "Restablecer valores"
+  "blockoutlinecustomizer.reset": "Restablecer valores",
+  "blockoutlinecustomizer.option.blink": "Parpadeo",
+  "blockoutlinecustomizer.option.blink.tooltip": "Parpadea en lugar de desvanecerse suavemente",
+  "blockoutlinecustomizer.option.see_through": "Transparente",
+  "blockoutlinecustomizer.option.see_through.tooltip": "Muestra el contorno a través de paredes y otros bloques",
+  "blockoutlinecustomizer.option.connected": "Conectados",
+  "blockoutlinecustomizer.option.connected.tooltip": "Contornea ambas mitades de puertas, camas, cofres dobles, plantas altas y pistones como una sola forma",
+  "blockoutlinecustomizer.option.cube": "Forma de cubo",
+  "blockoutlinecustomizer.option.cube.tooltip": "Contornea siempre el cubo completo en lugar de la forma real del bloque",
+  "blockoutlinecustomizer.option.block_info": "Info del bloque",
+  "blockoutlinecustomizer.option.block_info.tooltip": "Muestra una etiqueta flotante con el nombre, la posición y el estado del bloque"
 }

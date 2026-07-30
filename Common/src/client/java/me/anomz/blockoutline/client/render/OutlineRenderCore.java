@@ -52,18 +52,42 @@ public final class OutlineRenderCore {
     private OutlineRenderCore() {
     }
 
-    private static RenderType linesWidth(float width) {
+    private static RenderType linesWidth(float width, boolean seeThrough) {
         float quantized = Math.round(width * 4.0f) / 4.0f;
-        return LINE_TYPES.computeIfAbsent(quantized, w -> new RenderType(
-                "boc_lines_" + w, DefaultVertexFormat.POSITION_COLOR_NORMAL, VertexFormat.Mode.LINES,
+        float key = seeThrough ? -quantized : quantized;
+        return LINE_TYPES.computeIfAbsent(key, k -> new RenderType(
+                "boc_lines_" + quantized + (seeThrough ? "_seethrough" : ""),
+                DefaultVertexFormat.POSITION_COLOR_NORMAL, VertexFormat.Mode.LINES,
                 1536, false, false,
                 () -> {
                     RenderType.lines().setupRenderState();
-                    RenderSystem.lineWidth(w);
+                    RenderSystem.lineWidth(quantized);
+                    if (seeThrough) {
+                        RenderSystem.disableDepthTest();
+                    }
                 },
-                () -> RenderType.lines().clearRenderState()) {
+                () -> {
+                    if (seeThrough) {
+                        RenderSystem.enableDepthTest();
+                    }
+                    RenderType.lines().clearRenderState();
+                }) {
         });
     }
+
+    /** Entity-translucent-emissive quads, but with the depth test disabled. */
+    private static final RenderType QUADS_SEE_THROUGH = new RenderType(
+            "boc_quads_seethrough", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS,
+            1536, false, true,
+            () -> {
+                RenderType.entityTranslucentEmissive(WHITE_TEXTURE).setupRenderState();
+                RenderSystem.disableDepthTest();
+            },
+            () -> {
+                RenderSystem.enableDepthTest();
+                RenderType.entityTranslucentEmissive(WHITE_TEXTURE).clearRenderState();
+            }) {
+    };
 
     /**
      * Render type for our solid-color quads (fill + shader-fix outline).
@@ -72,8 +96,8 @@ public final class OutlineRenderCore {
      * Known limitation: some packs render entity translucency without alpha
      * blending, making the opacity sliders act as on/off under those packs.
      */
-    private static RenderType quadRenderType() {
-        return RenderType.entityTranslucentEmissive(WHITE_TEXTURE);
+    private static RenderType quadRenderType(boolean seeThrough) {
+        return seeThrough ? QUADS_SEE_THROUGH : RenderType.entityTranslucentEmissive(WHITE_TEXTURE);
     }
 
     private static void quadVertex(VertexConsumer vc, Matrix4f matrix,
@@ -98,10 +122,27 @@ public final class OutlineRenderCore {
         return PreviewState.style != null ? PreviewState.customEnabled : BOCConfig.get().customOutlineEnabled;
     }
 
+    /** Whether force mode is on right now (honors the live GUI preview). */
+    public static boolean forceOutlineActive() {
+        return PreviewState.style != null ? PreviewState.forceOutline : BOCConfig.get().forceOutline;
+    }
+
     public static void submit(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, BlockPos pos, VoxelShape shape, Vec3 cameraPos) {
         BOCConfig config = BOCConfig.get();
         StyleSettings preview = PreviewState.style;
         StyleSettings style = preview != null ? preview : OverrideResolver.resolve(config, pos);
+
+        // While the config screen is open, its unsaved toggles win
+        boolean seeThrough = preview != null ? PreviewState.seeThrough : config.seeThrough;
+        boolean connected = preview != null ? PreviewState.connectedBlocks : config.connectedBlocks;
+        boolean cube = preview != null ? PreviewState.cubeOutline : config.cubeOutline;
+        boolean blockInfo = preview != null ? PreviewState.blockInfo : config.blockInfo;
+
+        net.minecraft.client.multiplayer.ClientLevel level = net.minecraft.client.Minecraft.getInstance().level;
+        net.minecraft.world.level.block.state.BlockState state = level != null ? level.getBlockState(pos) : null;
+        if (state != null && (cube || connected)) {
+            shape = ConnectedBlocks.shapeFor(level, pos, state, shape, connected, cube);
+        }
 
         poseStack.pushPose();
         poseStack.translate(pos.getX() - cameraPos.x, pos.getY() - cameraPos.y, pos.getZ() - cameraPos.z);
@@ -110,16 +151,25 @@ public final class OutlineRenderCore {
         double pulse = pulseFactor(style);
 
         if (style.fillEnabled) {
-            renderFill(bufferSource, shape, pose.pose(), fillColor(style, pulse));
+            renderFill(bufferSource, shape, pose.pose(), fillColor(style, pulse), seeThrough);
         }
-        renderOutline(bufferSource, shape, pose, style, pulse,
+        renderOutline(bufferSource, shape, pose, style, pulse, seeThrough,
                 (float) (pos.getX() - cameraPos.x), (float) (pos.getY() - cameraPos.y), (float) (pos.getZ() - cameraPos.z));
+
+        if (blockInfo && state != null) {
+            BlockInfoOverlay.render(poseStack, bufferSource, pos, state);
+        }
 
         poseStack.popPose();
     }
 
     public static double pulseFactor(StyleSettings style) {
-        return style.pulseEnabled ? Animations.pulse(style.pulseSpeed, style.pulseMinOpacity) : 1.0;
+        if (!style.pulseEnabled) {
+            return 1.0;
+        }
+        return style.pulseBlink
+                ? Animations.blink(style.pulseSpeed, style.pulseMinOpacity)
+                : Animations.pulse(style.pulseSpeed, style.pulseMinOpacity);
     }
 
     /** Current marching offset for the dashed style (0 when not moving). */
@@ -190,7 +240,7 @@ public final class OutlineRenderCore {
     }
 
     private static void renderOutline(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, PoseStack.Pose pose, StyleSettings style, double pulse,
-                                      float relX, float relY, float relZ) {
+                                      boolean seeThrough, float relX, float relY, float relZ) {
         int alpha = (int) Math.round(style.outlineOpacity * pulse * 255.0);
         if (alpha <= 0) {
             return;
@@ -203,11 +253,11 @@ public final class OutlineRenderCore {
         int uniformColor = alphaBits | (outlineColor(style, pulse) & 0xFFFFFF);
 
         if (style.outlineQuadWidth) {
-            renderQuadOutline(bufferSource, shape, pose.pose(), style, gradient, baseT, phase, alphaBits, uniformColor, width, relX, relY, relZ);
+            renderQuadOutline(bufferSource, shape, pose.pose(), style, gradient, baseT, phase, alphaBits, uniformColor, width, seeThrough, relX, relY, relZ);
             return;
         }
 
-        RenderType lineType = linesWidth(width);
+        RenderType lineType = linesWidth(width, seeThrough);
         VertexConsumer vc = bufferSource.getBuffer(lineType);
 
         shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
@@ -246,8 +296,8 @@ public final class OutlineRenderCore {
      */
     private static void renderQuadOutline(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, StyleSettings style,
                                           boolean gradient, double baseT, float phase, int alphaBits, int uniformColor, float width,
-                                          float relX, float relY, float relZ) {
-        VertexConsumer vc = bufferSource.getBuffer(quadRenderType());
+                                          boolean seeThrough, float relX, float relY, float relZ) {
+        VertexConsumer vc = bufferSource.getBuffer(quadRenderType(seeThrough));
         int screenHeight = Math.max(1, net.minecraft.client.Minecraft.getInstance().getWindow().getHeight());
         // World units per requested pixel per block of distance, assuming ~70 degree FOV.
         float widthFactor = width * 1.4f / screenHeight;
@@ -277,7 +327,7 @@ public final class OutlineRenderCore {
             });
         });
 
-        bufferSource.endBatch(quadRenderType());
+        bufferSource.endBatch(quadRenderType(seeThrough));
     }
 
     private static void emitRibbon(VertexConsumer vc, Matrix4f matrix,
@@ -359,13 +409,13 @@ public final class OutlineRenderCore {
                 .endVertex();
     }
 
-    private static void renderFill(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, int color) {
+    private static void renderFill(MultiBufferSource.BufferSource bufferSource, VoxelShape shape, Matrix4f matrix, int color, boolean seeThrough) {
         if ((color >>> 24) == 0) {
             return;
         }
         final float offset = 0.001f;
 
-        VertexConsumer vc = bufferSource.getBuffer(quadRenderType());
+        VertexConsumer vc = bufferSource.getBuffer(quadRenderType(seeThrough));
         shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
             float x0 = (float) minX - offset;
             float y0 = (float) minY - offset;
@@ -385,7 +435,7 @@ public final class OutlineRenderCore {
             fillFace(vc, matrix, color, 1, 0, 0, x1, y0, z0, x1, y1, z0, x1, y1, z1, x1, y0, z1);
         });
 
-        bufferSource.endBatch(quadRenderType());
+        bufferSource.endBatch(quadRenderType(seeThrough));
     }
 
     /** One solid face, emitted with both windings so culling can't hide it. */

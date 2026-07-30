@@ -50,6 +50,10 @@ public class ConfigScreen extends Screen {
     private StyleSettings working;
     private boolean customOutlineEnabled;
     private boolean forceOutline;
+    private boolean seeThrough;
+    private boolean connectedBlocks;
+    private boolean cubeOutline;
+    private boolean blockInfo;
     private Tab tab = Tab.OUTLINE;
     private String selectedPreset = BOCConfig.PRESET_NEON;
 
@@ -71,6 +75,10 @@ public class ConfigScreen extends Screen {
         this.working = config.style.copy();
         this.customOutlineEnabled = config.customOutlineEnabled;
         this.forceOutline = config.forceOutline;
+        this.seeThrough = config.seeThrough;
+        this.connectedBlocks = config.connectedBlocks;
+        this.cubeOutline = config.cubeOutline;
+        this.blockInfo = config.blockInfo;
     }
 
     @Override
@@ -108,7 +116,7 @@ public class ConfigScreen extends Screen {
                 .bounds(x, panelY + panelH - widgetH - 8, w, widgetH)
                 .build());
 
-        PreviewState.set(working, customOutlineEnabled);
+        PreviewState.set(working, customOutlineEnabled, forceOutline, seeThrough, connectedBlocks, cubeOutline, blockInfo);
     }
 
     private void addTabBar() {
@@ -186,6 +194,7 @@ public class ConfigScreen extends Screen {
 
         this.addRenderableWidget(new CallbackCheckbox(x, y, Component.translatable("blockoutlinecustomizer.option.gradient"), this.font,
                 working.outlineRgbGradient, v -> working.outlineRgbGradient = v));
+        addToggle(x + w / 2, y, "blockoutlinecustomizer.option.blink", working.pulseBlink, v -> working.pulseBlink = v);
         y += rowStep;
 
         y = addToggleWithSpeed(x, y, w,
@@ -257,6 +266,14 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(force);
         y += rowStep;
 
+        int half = w / 2;
+        addToggle(x, y, "blockoutlinecustomizer.option.see_through", seeThrough, v -> seeThrough = v);
+        addToggle(x + half, y, "blockoutlinecustomizer.option.connected", connectedBlocks, v -> connectedBlocks = v);
+        y += rowStep;
+        addToggle(x, y, "blockoutlinecustomizer.option.cube", cubeOutline, v -> cubeOutline = v);
+        addToggle(x + half, y, "blockoutlinecustomizer.option.block_info", blockInfo, v -> blockInfo = v);
+        y += rowStep;
+
         if (!config.presets.containsKey(selectedPreset)) {
             selectedPreset = config.presets.keySet().stream().findFirst().orElse(BOCConfig.PRESET_NEON);
         }
@@ -279,6 +296,14 @@ public class ConfigScreen extends Screen {
 
         this.addRenderableWidget(Button.builder(Component.translatable("blockoutlinecustomizer.reset"), b -> resetToDefaults())
                 .bounds(x, y, w, widgetH).build());
+    }
+
+    /** A checkbox whose tooltip is looked up at {@code key + ".tooltip"}. */
+    private void addToggle(int x, int y, String key, boolean selected, java.util.function.Consumer<Boolean> onChange) {
+        Checkbox box = new CallbackCheckbox(x, y, Component.translatable(key), this.font, selected, onChange);
+        box.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                Component.translatable(key + ".tooltip")));
+        this.addRenderableWidget(box);
     }
 
     private int addToggleWithSpeed(int x, int y, int w, Component label,
@@ -371,7 +396,7 @@ public class ConfigScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        PreviewState.set(working, customOutlineEnabled);
+        PreviewState.set(working, customOutlineEnabled, forceOutline, seeThrough, connectedBlocks, cubeOutline, blockInfo);
     }
 
     @Override
@@ -566,6 +591,10 @@ public class ConfigScreen extends Screen {
     private void saveAndClose() {
         config.customOutlineEnabled = customOutlineEnabled;
         config.forceOutline = forceOutline;
+        config.seeThrough = seeThrough;
+        config.connectedBlocks = connectedBlocks;
+        config.cubeOutline = cubeOutline;
+        config.blockInfo = blockInfo;
         config.style = working.copy();
         config.save();
         this.minecraft.setScreen(lastScreen);

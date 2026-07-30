@@ -39,5 +39,15 @@
   "blockoutlinecustomizer.preset.custom": "Custom",
   "blockoutlinecustomizer.preset.apply": "Apply Preset",
   "blockoutlinecustomizer.preset.save_custom": "Save as Custom",
-  "blockoutlinecustomizer.reset": "Reset to Defaults"
+  "blockoutlinecustomizer.reset": "Reset to Defaults",
+  "blockoutlinecustomizer.option.blink": "Blink",
+  "blockoutlinecustomizer.option.blink.tooltip": "Flash on/off instead of fading smoothly",
+  "blockoutlinecustomizer.option.see_through": "See-through",
+  "blockoutlinecustomizer.option.see_through.tooltip": "Show the outline through walls and other blocks",
+  "blockoutlinecustomizer.option.connected": "Connected",
+  "blockoutlinecustomizer.option.connected.tooltip": "Outline both halves of doors, beds, double chests, tall plants and pistons as one shape",
+  "blockoutlinecustomizer.option.cube": "Cube shape",
+  "blockoutlinecustomizer.option.cube.tooltip": "Always outline the full block cube instead of the block's actual shape",
+  "blockoutlinecustomizer.option.block_info": "Block info",
+  "blockoutlinecustomizer.option.block_info.tooltip": "Show a floating tag with the block's name, position and state above the target"
 }

@@ -32,6 +32,14 @@ public class BOCConfig {
     public boolean customOutlineEnabled = true;
     /** Also replace outlines drawn by other mods' custom highlight renderers (e.g. AE2 cables). */
     public boolean forceOutline = false;
+    /** Render the outline (and fill) through walls. */
+    public boolean seeThrough = false;
+    /** Outline both halves of doors, beds, chests, tall plants and pistons as one shape. */
+    public boolean connectedBlocks = false;
+    /** Always outline the full block cube instead of the block's actual shape. */
+    public boolean cubeOutline = false;
+    /** Show a floating info tag (name, position, state) above the targeted block. */
+    public boolean blockInfo = false;
     public StyleSettings style = new StyleSettings();
     public LinkedHashMap<String, StyleSettings> presets = new LinkedHashMap<>();
     public List<BlockOverride> blockOverrides = new ArrayList<>();

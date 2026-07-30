@@ -19,7 +19,7 @@ public class OutlineRenderer {
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onHighlightFirst(RenderHighlightEvent.Block event) {
-        if (BOCConfig.get().forceOutline) {
+        if (OutlineRenderCore.forceOutlineActive()) {
             render(event);
         }
     }
@@ -30,7 +30,7 @@ public class OutlineRenderer {
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onHighlightLast(RenderHighlightEvent.Block event) {
-        if (!BOCConfig.get().forceOutline) {
+        if (!OutlineRenderCore.forceOutlineActive()) {
             render(event);
         }
     }

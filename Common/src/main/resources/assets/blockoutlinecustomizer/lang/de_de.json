@@ -39,5 +39,15 @@
   "blockoutlinecustomizer.preset.custom": "Eigene",
   "blockoutlinecustomizer.preset.apply": "Vorlage anwenden",
   "blockoutlinecustomizer.preset.save_custom": "Als Eigene speichern",
-  "blockoutlinecustomizer.reset": "Auf Standard zurücksetzen"
+  "blockoutlinecustomizer.reset": "Auf Standard zurücksetzen",
+  "blockoutlinecustomizer.option.blink": "Blinken",
+  "blockoutlinecustomizer.option.blink.tooltip": "Blinkt an/aus statt sanft zu pulsieren",
+  "blockoutlinecustomizer.option.see_through": "Durchsichtig",
+  "blockoutlinecustomizer.option.see_through.tooltip": "Zeigt die Umrandung durch Wände und andere Blöcke hindurch",
+  "blockoutlinecustomizer.option.connected": "Verbunden",
+  "blockoutlinecustomizer.option.connected.tooltip": "Umrandet beide Hälften von Türen, Betten, Doppeltruhen, hohen Pflanzen und Kolben als eine Form",
+  "blockoutlinecustomizer.option.cube": "Würfelform",
+  "blockoutlinecustomizer.option.cube.tooltip": "Umrandet immer den vollen Blockwürfel statt der tatsächlichen Blockform",
+  "blockoutlinecustomizer.option.block_info": "Blockinfo",
+  "blockoutlinecustomizer.option.block_info.tooltip": "Zeigt ein schwebendes Schild mit Name, Position und Zustand des Blocks"
 }

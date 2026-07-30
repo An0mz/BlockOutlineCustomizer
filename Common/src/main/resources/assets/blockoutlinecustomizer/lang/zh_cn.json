@@ -39,5 +39,15 @@
   "blockoutlinecustomizer.preset.custom": "自定义",
   "blockoutlinecustomizer.preset.apply": "应用预设",
   "blockoutlinecustomizer.preset.save_custom": "保存为自定义",
-  "blockoutlinecustomizer.reset": "恢复默认"
+  "blockoutlinecustomizer.reset": "恢复默认",
+  "blockoutlinecustomizer.option.blink": "闪烁",
+  "blockoutlinecustomizer.option.blink.tooltip": "硬性闪烁而非平滑淡入淡出",
+  "blockoutlinecustomizer.option.see_through": "透视",
+  "blockoutlinecustomizer.option.see_through.tooltip": "透过墙壁和其他方块显示轮廓",
+  "blockoutlinecustomizer.option.connected": "连接方块",
+  "blockoutlinecustomizer.option.connected.tooltip": "将门、床、大型箱子、高植物和活塞的两半部分作为一个整体描边",
+  "blockoutlinecustomizer.option.cube": "方块形状",
+  "blockoutlinecustomizer.option.cube.tooltip": "始终描边完整方块而非方块的实际形状",
+  "blockoutlinecustomizer.option.block_info": "方块信息",
+  "blockoutlinecustomizer.option.block_info.tooltip": "在目标方块上方显示名称、坐标和状态标签"
 }

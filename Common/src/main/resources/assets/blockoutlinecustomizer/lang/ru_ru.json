@@ -39,5 +39,15 @@
   "blockoutlinecustomizer.preset.custom": "Свой",
   "blockoutlinecustomizer.preset.apply": "Применить пресет",
   "blockoutlinecustomizer.preset.save_custom": "Сохранить как свой",
-  "blockoutlinecustomizer.reset": "Сбросить настройки"
+  "blockoutlinecustomizer.reset": "Сбросить настройки",
+  "blockoutlinecustomizer.option.blink": "Мигание",
+  "blockoutlinecustomizer.option.blink.tooltip": "Мигает вместо плавного затухания",
+  "blockoutlinecustomizer.option.see_through": "Сквозь стены",
+  "blockoutlinecustomizer.option.see_through.tooltip": "Показывает обводку сквозь стены и другие блоки",
+  "blockoutlinecustomizer.option.connected": "Связанные",
+  "blockoutlinecustomizer.option.connected.tooltip": "Обводит обе половины дверей, кроватей, двойных сундуков, высоких растений и поршней как одну форму",
+  "blockoutlinecustomizer.option.cube": "Форма куба",
+  "blockoutlinecustomizer.option.cube.tooltip": "Всегда обводит полный куб вместо реальной формы блока",
+  "blockoutlinecustomizer.option.block_info": "Инфо блока",
+  "blockoutlinecustomizer.option.block_info.tooltip": "Показывает табличку с именем, позицией и состоянием блока"
 }
